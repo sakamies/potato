@@ -4,8 +4,8 @@ var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
 
 var styles = {};
-styles.source = './assets/scss/*.scss';
-styles.dest = './assets/css';
+styles.source = './app/assets/scss/*.scss';
+styles.dest = './app/assets/css';
 styles.sassOptions = {
   errLogToConsole: true,
   outputStyle: 'expanded'
