@@ -4,8 +4,8 @@ var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
 
 var styles = {};
-styles.source = './app/assets/scss/*.scss';
-styles.dest = './app/assets/css';
+styles.source = 'app/assets/scss/**/*.scss';
+styles.dest = 'app/assets/css';
 styles.sassOptions = {
   errLogToConsole: true,
   outputStyle: 'expanded'
@@ -19,16 +19,16 @@ gulp.task('sass', function () {
     .src(styles.source)
     .pipe(sourcemaps.init())
     .pipe(sass(styles.sassOptions).on('error', sass.logError))
-    .pipe(sourcemaps.write(styles.dest))
     .pipe(autoprefixer())
+    .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(styles.dest));
 });
 
 gulp.task('watch', function() {
   return gulp
-    .watch(input, ['sass'])
+    .watch(styles.source, ['sass'])
     .on('change', function(event) {
-      console.log(event.type + ': ' + event.path', run sass');
+      console.log(event.type + ': ' + event.path + ', run sass');
     });
 });
 

@@ -11,36 +11,24 @@ html, body {
   height: 100%;
 }
 body {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.5em;
-  background-repeat: repeat;
+  font-family: sans-serif;
+  font-size: $em;
+  line-height: $vx;
   -webkit-text-size-adjust: 100%;
-  /*-webkit-font-smoothing: antialiased;*/
+  //-webkit-font-smoothing: antialiased;
 }
-a {
+a,
+a:visited {
   color: $blue;
-  text-decoration: none;
-}
-a:hover {
-
-}
-a:focus {
-  outline: 1px solid currentColor;
-  outline-offset: 2px;
 }
 pre, code {
-  font-size: inherit;
-  font-family: monospace;
-}
-ul, ol, li {
-  list-style: none;
+  font: inherit;
+  font-family: $font-mono;
 }
 dl, dt, dd, li {
 }
 h1, h2, h3, h4, h5, h6 {
-  font-size: inherit;
-  font-weight: normal;
+  font: inherit;
 }
 h1 {
   font-weight: 400;
@@ -67,6 +55,10 @@ hr {
   border-width: 1px 0px 0px 0px;
   margin: 10px 0px 9px 0px;
   opacity: .3;
+}
+q::before,
+q::after {
+  content: '';
 }
 
 input,
@@ -109,17 +101,3 @@ textarea:focus {
   outline-offset: -1px;
 }
 
-
-.layout {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch;
-  align-content: stretch;
-  height: 100%;
-  width: 100%;
-  overflow: auto;
-}
-.layout > * {
-  flex: 1 0 auto;
-}

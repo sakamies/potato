@@ -1,102 +1,81 @@
-elemental {
-  display: flex;
-  flex-direction: column;
-  font-family: 'Menlo', monospace;
-  font-size: 14px;
-  line-height: 22px;
-  color: #dedede;
-  background: #272822;
-}
-
-.toolbar {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 11px;
-}
-.toolbar > * {
-  flex: 1 0 auto;
-}
-.toolbar button {
-  flex: 0 0 auto;
-}
-
 .document {
-  display: table;
-  width: 100%;
+  font-family: $font-mono;
+  font-size: $em;
+  line-height: $vx;
+  padding: $vx/2 0;
+  color: $light;
+  background: $dark;
 }
-.row {
-  display: table-row;
-}
-.row > * {
-  display: table-cell;
-}
-.index {
+.rownums {
   text-align: right;
   white-space: nowrap;
   padding-left: 1ch;
   padding-right: 1ch;
-  width: 0.01%;
 }
-.props {
-  border-radius: 3px;
-}
-.prop > span {
-  margin: 0 .5ch;
-}
-.input {
-  box-sizing: content-box;
-  min-height: 0;
-  padding: 0 0 0 .5ch;
-  margin: 0;
-  border-radius: 3px;
-  background: none;
-  //box-shadow: inset 0px 0px 0px 1px currentColor;
-}
-.input:focus {
-  outline: none;
-}
-.name {
-  color: #f92772;
-}
-.name::selection {
-  color: white;
-  background: #f92772;
-}
-.attr-name {
-  white-space: nowrap;
-  color: #a6e22d;
-}
-.attr-name::selection {
-  color: white;
-  background: #a6e22d;
-}
-.attr-value {
-  color: #e6db74;
-}
-.attr-value::selection {
-  color: white;
-  background: #e6db74;
-}
+.row {
+  white-space: pre;
 
+  *::after {
+    content: ' ';
+  }
+  //
+  // Elements
+  // a = indentation
+  // b = element name;
+  // i = attribute name
+  // q = attribute value
+  // because i'm lazy.
+  //
+  a {
+    color: transparent !important;
+  }
+  b {
+    color: $red;
+  }
+  b::selection {
+    color: white;
+    background: $red;
+  }
+  i {
+    white-space: nowrap;
+    color: $green;
+  }
+  i::selection {
+    color: white;
+    background: $green;
+  }
+  i::after {
+    content: ':';
+  }
+  q {
+    color: $yellow;
+    margin-left: 0;
+  }
+  q::selection {
+    color: white;
+    background: $yellow;
+  }
+  //
+  // UI States
+  //
+  :focus {
+    outline: 1px solid;
+    outline-offset: 1px;
+  }
+  .hilite {
+    position: relative;
+    background: #49483E;
+    background: #383830;
+  }
+  .selected {
+    background: #383830;
+  }
+  &.comment > * {
+    color: $gray1;
+  }
+  &.comment > *::selection {
+    color: white;
+    background-color: $light;
+  }
 
-/* UI States */
-.focus {
-  margin: -3px;
-  padding: 2px;
-  border: 1px solid #75715e;
-  border-radius: 3px;
-}
-.hilite {
-  position: relative;
-  background: #49483E;
-  background: #383830;
-}
-.selected {
-  background: #383830;
-}
-.comment > * {
-  font-style: italic;
-  opacity: .4;
 }
