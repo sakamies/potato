@@ -1,0 +1,125 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+html, body {
+  height: 100%;
+}
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5em;
+  background-repeat: repeat;
+  -webkit-text-size-adjust: 100%;
+  /*-webkit-font-smoothing: antialiased;*/
+}
+a {
+  color: $blue;
+  text-decoration: none;
+}
+a:hover {
+
+}
+a:focus {
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
+}
+pre, code {
+  font-size: inherit;
+  font-family: monospace;
+}
+ul, ol, li {
+  list-style: none;
+}
+dl, dt, dd, li {
+}
+h1, h2, h3, h4, h5, h6 {
+  font-size: inherit;
+  font-weight: normal;
+}
+h1 {
+  font-weight: 400;
+  font-size: 2em;
+  line-height: .85em;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  margin: 10px 0px 20px 0;
+}
+h2 {
+  font-weight: 400;
+  font-size: 1.8em;
+  line-height: .85em;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  margin: 20px 0px 10px 0;
+}
+abbr {
+  font-variant: small-caps;
+  text-transform: lowercase;
+}
+hr {
+  border: 1px solid currentColor;
+  border-width: 1px 0px 0px 0px;
+  margin: 10px 0px 9px 0px;
+  opacity: .3;
+}
+
+input,
+button,
+select,
+textarea {
+  font: inherit;
+  min-height: $vx*2;
+  margin: 0;
+  padding: $vx/2 $hx;
+  color: $dark;
+  background: $light;
+  border: none;
+  -webkit-font-smoothing: inherit;
+}
+select {
+}
+
+button {
+  font-weight: 400;
+  line-height: 1*$vx;
+  display: inline-block;
+  vertical-align: baseline;
+  padding: 0 2*$hx;
+  margin: 0;
+  color: white;
+  background: $dark;
+  background: linear-gradient(to bottom, $gray3, $dark);
+  border-radius: 0;
+  box-shadow: none;
+  cursor: pointer;
+}
+button:active {
+}
+input:focus,
+button:focus,
+select:focus,
+textarea:focus {
+  outline: 1px solid hsla(198, 49%, 46%, 1);
+  outline-offset: -1px;
+}
+
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: stretch;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+}
+.layout > * {
+  flex: 1 0 auto;
+}
