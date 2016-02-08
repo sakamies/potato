@@ -12,7 +12,11 @@
   padding-left: 1ch;
   padding-right: 1ch;
 }
-.row {
+//
+// Regular row
+///
+.row,
+.com {
   white-space: pre;
 
   *::after {
@@ -28,6 +32,7 @@
   //
   a {
     color: transparent !important;
+    pointer-events: none;
   }
   b {
     color: $red;
@@ -62,20 +67,23 @@
     outline: 1px solid;
     outline-offset: 1px;
   }
-  .hilite {
-    position: relative;
-    background: #49483E;
-    background: #383830;
-  }
   .selected {
-    background: #383830;
+    background: $gray3;
   }
-  &.comment > * {
+  .hilite {
+    background: $gray3;
+  }
+}
+//
+//Comment
+//
+.com {
+  //Increase specificity with double class name
+  &.com > * {
     color: $gray1;
   }
-  &.comment > *::selection {
+  &.com > *::selection {
     color: white;
     background-color: $light;
   }
-
 }

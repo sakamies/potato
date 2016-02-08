@@ -184,91 +184,106 @@ textarea:focus {
   padding-right: 1ch;
 }
 
-.row {
+.row,
+.com {
   white-space: pre;
 }
 
-.row *::after {
+.row *::after,
+.com *::after {
   content: ' ';
 }
 
-.row a {
+.row a,
+.com a {
   color: transparent !important;
+  pointer-events: none;
 }
 
-.row b {
+.row b,
+.com b {
   color: #f92772;
 }
 
-.row b::-moz-selection {
+.row b::-moz-selection,
+.com b::-moz-selection {
   color: white;
   background: #f92772;
 }
 
-.row b::selection {
+.row b::selection,
+.com b::selection {
   color: white;
   background: #f92772;
 }
 
-.row i {
+.row i,
+.com i {
   white-space: nowrap;
   color: #a6e22d;
 }
 
-.row i::-moz-selection {
+.row i::-moz-selection,
+.com i::-moz-selection {
   color: white;
   background: #a6e22d;
 }
 
-.row i::selection {
+.row i::selection,
+.com i::selection {
   color: white;
   background: #a6e22d;
 }
 
-.row i::after {
+.row i::after,
+.com i::after {
   content: ':';
 }
 
-.row q {
+.row q,
+.com q {
   color: #e6db74;
   margin-left: 0;
 }
 
-.row q::-moz-selection {
+.row q::-moz-selection,
+.com q::-moz-selection {
   color: white;
   background: #e6db74;
 }
 
-.row q::selection {
+.row q::selection,
+.com q::selection {
   color: white;
   background: #e6db74;
 }
 
-.row :focus {
+.row :focus,
+.com :focus {
   outline: 1px solid;
   outline-offset: 1px;
 }
 
-.row .hilite {
-  position: relative;
-  background: #49483E;
+.row .selected,
+.com .selected {
   background: #383830;
 }
 
-.row .selected {
+.row .hilite,
+.com .hilite {
   background: #383830;
 }
 
-.row.comment > * {
+.com.com > * {
   color: #75715e;
 }
 
-.row.comment > *::-moz-selection {
+.com.com > *::-moz-selection {
   color: white;
   background-color: #f8f8f2;
 }
 
-.row.comment > *::selection {
+.com.com > *::selection {
   color: white;
   background-color: #f8f8f2;
 }
