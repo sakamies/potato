@@ -172,7 +172,7 @@ textarea:focus {
   font-family: "Menlo", monospace;
   font-size: 16px;
   line-height: 24px;
-  padding: 12px 0;
+  padding: 12px 1ch;
   color: #f8f8f2;
   background: #272822;
 }
@@ -192,12 +192,6 @@ textarea:focus {
 .row *::after,
 .com *::after {
   content: ' ';
-}
-
-.row a,
-.com a {
-  color: transparent !important;
-  pointer-events: none;
 }
 
 .row b,
@@ -258,22 +252,6 @@ textarea:focus {
   background: #e6db74;
 }
 
-.row :focus,
-.com :focus {
-  outline: 1px solid;
-  outline-offset: 1px;
-}
-
-.row .selected,
-.com .selected {
-  background: #383830;
-}
-
-.row .hilite,
-.com .hilite {
-  background: #383830;
-}
-
 .com.com > * {
   color: #75715e;
 }
@@ -286,6 +264,23 @@ textarea:focus {
 .com.com > *::selection {
   color: white;
   background-color: #f8f8f2;
+}
+
+.mode-document .document :focus {
+  outline: none;
+}
+
+.mode-property .document :focus {
+  outline: 1px solid;
+  outline-offset: 1px;
+}
+
+.selected {
+  background: #383830;
+}
+
+.hilite {
+  background: #383830;
 }
 
 /*# sourceMappingURL=elemental.css.map */

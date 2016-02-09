@@ -1,8 +1,18 @@
+// Single letter elements, so if this gets extendable, i can write even more cryptic code, ugh.
+// a
+// b
+// i
+// p
+// q
+// s
+// u
+
+
 .document {
   font-family: $font-mono;
   font-size: $em;
   line-height: $vx;
-  padding: $vx/2 0;
+  padding: $vx/2 1ch;
   color: $light;
   background: $dark;
 }
@@ -24,16 +34,11 @@
   }
   //
   // Elements
-  // a = indentation
   // b = element name;
   // i = attribute name
   // q = attribute value
   // because i'm lazy.
   //
-  a {
-    color: transparent !important;
-    pointer-events: none;
-  }
   b {
     color: $red;
   }
@@ -60,19 +65,6 @@
     color: white;
     background: $yellow;
   }
-  //
-  // UI States
-  //
-  :focus {
-    outline: 1px solid;
-    outline-offset: 1px;
-  }
-  .selected {
-    background: $gray3;
-  }
-  .hilite {
-    background: $gray3;
-  }
 }
 //
 //Comment
@@ -86,4 +78,20 @@
     color: white;
     background-color: $light;
   }
+}
+//
+// UI States
+//
+.mode-document .document :focus {
+  outline: none;
+}
+.mode-property .document :focus {
+  outline: 1px solid;
+  outline-offset: 1px;
+}
+.selected {
+  background: $gray3;
+}
+.hilite {
+  background: $gray3;
 }
