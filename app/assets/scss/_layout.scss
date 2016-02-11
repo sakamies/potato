@@ -14,10 +14,14 @@
   flex: 0 0 auto;
   display: flex;
   flex-direction: row;
+  background-color: $dark;
+  border: 1px solid $gray3;
+  border-width: 1px 0;
 }
 .toolbar > * {
   flex: 1 0 auto;
 }
 .toolbar button {
   flex: 0 0 auto;
+
 }

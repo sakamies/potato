@@ -29,6 +29,9 @@
 .com {
   white-space: pre;
 
+  * {
+    display: inline;
+  }
   *::after {
     content: ' ';
   }

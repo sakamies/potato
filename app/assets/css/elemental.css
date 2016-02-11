@@ -74,25 +74,23 @@ select,
 textarea {
   font: inherit;
   min-height: 48px;
+  min-width: 48px;
   margin: 0;
-  padding: 12px 1ch;
+  padding: 12px;
   color: #272822;
-  background: #f8f8f2;
+  background-color: #f8f8f2;
   border: none;
   -webkit-font-smoothing: inherit;
 }
 
 button {
   font-weight: 400;
-  line-height: 24px;
   display: inline-block;
-  vertical-align: baseline;
+  vertical-align: middle;
   padding: 0 2ch;
   margin: 0;
   color: white;
-  background: #272822;
-  background: -webkit-linear-gradient(top, #383830, #272822);
-  background: linear-gradient(to bottom, #383830, #272822);
+  background-color: #272822;
   border-radius: 0;
   box-shadow: none;
   cursor: pointer;
@@ -152,6 +150,9 @@ textarea:focus {
   -webkit-flex-direction: row;
       -ms-flex-direction: row;
           flex-direction: row;
+  background-color: #272822;
+  border: 1px solid #383830;
+  border-width: 1px 0;
 }
 
 .toolbar > * {
@@ -187,6 +188,11 @@ textarea:focus {
 .row,
 .com {
   white-space: pre;
+}
+
+.row *,
+.com * {
+  display: inline;
 }
 
 .row *::after,

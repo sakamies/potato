@@ -67,10 +67,11 @@ select,
 textarea {
   font: inherit;
   min-height: $vx*2;
+  min-width: $vx*2;
   margin: 0;
-  padding: $vx/2 $hx;
+  padding: $vx/2;
   color: $dark;
-  background: $light;
+  background-color: $light;
   border: none;
   -webkit-font-smoothing: inherit;
 }
@@ -79,14 +80,12 @@ select {
 
 button {
   font-weight: 400;
-  line-height: 1*$vx;
   display: inline-block;
-  vertical-align: baseline;
+  vertical-align: middle;
   padding: 0 2*$hx;
   margin: 0;
   color: white;
-  background: $dark;
-  background: linear-gradient(to bottom, $gray3, $dark);
+  background-color: $dark;
   border-radius: 0;
   box-shadow: none;
   cursor: pointer;

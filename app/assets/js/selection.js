@@ -1,29 +1,38 @@
+APP.select = {};
 //takes new element to select and current selection, returns new selection
-app.selectElm = function select (elm, sel) {
-  sel.elm.contentEditable = false;
+APP.select.element = function (elm, sel) {
+  //TODO: collapsing & additive/diffing selection with shift key
+  if (sel) {
+    //take care of old selection, if there is such
+    sel.elm.parentElement.classList.remove('selected');
+    sel.elm.contentEditable = false;
+  }
+
+  elm.parentElement.classList.add('selected');
   elm.contentEditable = true;
   elm.focus();
   document.execCommand('selectAll',false,null);
-  return {'elm': elm, row: elm.parentElement.id};
+
+  return {'elm': elm, row: elm.parentElement};
 }
 
-app.selectNext = function select (sel) {
+APP.select.next = function (sel) {
   var newElm = sel.elm;
   var $newElm = $(sel.elm).next();
   if ($newElm.length !== 0) {
     newElm = $newElm[0];
   }
-  return app.selectElm(newElm, sel);
+  return APP.select.element(newElm, sel);
 }
-app.selectPrev = function select (sel) {
+APP.select.prev = function (sel) {
   var newElm = sel.elm;
   var $newElm = $(sel.elm).prev();
   if ($newElm.length !== 0) {
     newElm = $newElm[0];
   }
-  return app.selectElm(newElm, sel);
+  return APP.select.element(newElm, sel);
 }
-app.selectUp = function select (sel) {
+APP.select.up = function (sel) {
   var newElm = sel.elm;
   var $newElm = $(sel.elm).parent().prev();
   var index = $(sel.elm).index();
@@ -37,9 +46,9 @@ app.selectUp = function select (sel) {
       newElm = $children[$newElm.length-1];
     }
   }
-  return app.selectElm(newElm, sel);
+  return APP.select.element(newElm, sel);
 }
-app.selectDown = function select (sel) {
+APP.select.down = function select (sel) {
   var newElm = sel.elm;
   var $newElm = $(sel.elm).parent().next();
   var index = $(sel.elm).index();
@@ -53,5 +62,5 @@ app.selectDown = function select (sel) {
       newElm = $children[$newElm.length-1];
     }
   }
-  return app.selectElm(newElm, sel);
+  return APP.select.element(newElm, sel);
 }
