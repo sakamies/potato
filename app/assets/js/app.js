@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
   //TODO: First load default document from somewhere, now it's hardcoded in index.html
 
-  APP.doc.elm = document.querySelector('.document'); //TODO: parse document from some data, preferably read in some HAML
+  APP.doc.open(document.querySelector('.document'));
 
   //Set up initial app state
   APP.state = {
@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
   APP.state.selection = APP.select.element(APP.doc.elm.querySelector('#_0 > :first-child'));
 
   //TODO: copy input events from elemental-5
-  APP.doc.elm.addEventListener('click', APP.click);
+  APP.doc.elm.addEventListener('mousedown', APP.pointer.mousedown);
+  APP.doc.elm.addEventListener('mouseup', APP.pointer.mouseup);
+  APP.doc.elm.addEventListener('click', APP.pointer.click);
   APP.doc.elm.addEventListener('keydown', APP.keyboard.keydown);
 });

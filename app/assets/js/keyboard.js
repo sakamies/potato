@@ -14,11 +14,14 @@ APP.keyboard.getModifiers = function (event) {
 }
 
 //TODO: make a keymap that's something like {key+mods: action}
+//TODO: platform especific keymaps because of meta/cmd/ctrl differences
 APP.keyboard.keydown = function (event) {
   var mode = APP.state.mode;
   var sel = APP.state.selection;
   var key = keysight(event).key; //TODO: use as module
   var mod = APP.keyboard.getModifiers(event);
+
+  //TODO: check if the whole property is selected, if not, then let backspace work as normal
 
   //Navigation & selection
   if (key === 'left' && !mod.any) {
@@ -38,7 +41,25 @@ APP.keyboard.keydown = function (event) {
     sel = APP.select.down(sel);
   }
 
-  //Editing of rows
+  //Editing rows
+  if (key === '\n') {
+    event.preventDefault();
+    sel = APP.doc.row.new(sel);
+  }
+  if (key === '\b' && (mod.meta || mod.ctrl)) {
+    event.preventDefault();
+    sel = APP.doc.row.del(sel);
+  }
+  if (key === 'up' && mod.ctrl) {
+    //TODO: platform especific keymaps because of meta/cmd/ctrl differences
+    event.preventDefault();
+    sel = APP.doc.row.moveUp(sel);
+  }
+  if (key === 'down' && mod.ctrl) {
+    //TODO: platform especific keymaps because of meta/cmd/ctrl differences
+    event.preventDefault();
+    sel = APP.doc.row.moveDown(sel);
+  }
   if (key === '\t' && !mod.any) {
     event.preventDefault();
     sel = APP.doc.row.indent(sel);
@@ -48,7 +69,7 @@ APP.keyboard.keydown = function (event) {
     sel = APP.doc.row.outdent(sel);
   }
 
-  //add & delete props
+  //Editing properties
   if (key === ' ' && !mod.any) {
     event.preventDefault();
     sel = APP.doc.prop.new(sel);
@@ -58,15 +79,16 @@ APP.keyboard.keydown = function (event) {
     sel = APP.doc.prop.del(sel);
   }
 
-  if (key === '\n') {
-    console.log('add row')
-    //TODO: platform especific keymaps because of meta/cmd/ctrl differences
+  //Undo/redo
+  if (key === 'z' && (mod.meta || mod.ctrl)) {
     event.preventDefault();
-    sel = APP.doc.row.new(sel);
+    sel = APP.doc.history.undo(sel);
+  }
+  if (key === 'z' && ((mod.meta && mod.shift) || (mod.ctrl && mod.shift))) {
+    event.preventDefault();
+    sel = APP.doc.history.redo();
   }
 
-  //add row
-  //delete row
   //move row up
   //move row down
   //cut copy paste

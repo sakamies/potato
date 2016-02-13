@@ -13,10 +13,12 @@ APP.select.element = function (elm, sel) {
   if (sel) {
     //take care of old selection, if there is such
     sel.elm.parentElement.classList.remove('selected');
+    sel.elm.classList.remove('focus');
     sel.elm.contentEditable = false;
   }
 
   elm.parentElement.classList.add('selected');
+  elm.classList.add('focus');
   elm.contentEditable = true;
   elm.focus();
   document.execCommand('selectAll',false,null);
