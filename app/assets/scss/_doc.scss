@@ -1,4 +1,4 @@
-// Single letter elements, so if this gets extendable, i can write even more cryptic code, ugh.
+// Doc uses single letter elements, so if this gets extendable, i can write even more cryptic code, ugh.
 // a
 // b
 // i
@@ -6,6 +6,7 @@
 // q
 // s
 // u
+// because i'm lazy
 
 
 .document {
@@ -29,42 +30,34 @@
 .com {
   white-space: pre;
 
-  * {
+  i {
+    font-style: normal;
     display: inline;
   }
-  *::after {
+  i::after {
     content: ' ';
   }
-  //
-  // Elements
-  // b = element name;
-  // i = attribute name
-  // q = attribute value
-  // because i'm lazy.
-  //
-  b {
+  //TODO: make syntax specific styles be a partf of app config so the app is not tied to any particular syntax
+  .i1 {
     color: $red;
   }
-  b::selection {
+  .i1::selection {
     color: white;
     background: $red;
   }
-  i {
+  .i2 {
     white-space: nowrap;
     color: $green;
   }
-  i::selection {
+  .i2::selection {
     color: white;
     background: $green;
   }
-  i::after {
-    content: ':';
-  }
-  q {
+  .i3 {
     color: $yellow;
     margin-left: 0;
   }
-  q::selection {
+  .i3::selection {
     color: white;
     background: $yellow;
   }
@@ -83,7 +76,7 @@
   }
 }
 //
-// UI States
+// Document UI States
 //
 .mode-document .document :focus {
   outline: none;

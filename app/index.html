@@ -4,14 +4,20 @@
   <head>
     <title>Potato</title>
     <link rel="stylesheet" href="assets/css/elemental.css">
+
     <script src="assets/js/vendor/keysight.umd.js"></script>
     <script src="assets/js/vendor/zepto.min.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script>
+      APP = {}; //TODO: use some js module system to bring in js files and their functions and get rid of globals
+    </script>
     <script src="assets/js/config.js"></script>
     <script src="assets/js/utils.js"></script>
     <script src="assets/js/selection.js"></script>
+    <script src="assets/js/document.js"></script>
     <script src="assets/js/keyboard.js"></script>
     <script src="assets/js/pointer.js"></script>
+    <script src="assets/js/app.js"></script>
+
   </head>
 
   <body class="mode-document">
@@ -21,16 +27,16 @@
       <div class="document">
         <div class="rownums"></div>
         <div class="rows">
-          <div id="_0" class="row"><b>html</b><i>lang</i><q>en</q></div>
-          <div id="_1" class="row">  <b>head</b></div>
-          <div id="_2" class="row">    <b>title</b></div>
-          <div id="_3" class="row">      <b>Untitled</b></div>
-          <div id="_4" class="row">  <b>body</b><i>class</i><q>layout</q></div>
-          <div id="_5" class="row">    <b>p</b><i>class</i><q>something</q></div>
-          <div id="_6" class="row">      <p>Normal textnode</p></div>
-          <div id="_7" class="com">    <b>p</b><i>class</i><q>something else</q></div>
-          <div id="_8" class="com">      <p>Commented out p with textnode</p></div>
-          <div id="_9" class="row">    <b>input</b><i>name</i><q>username</q><i>type</i><q>email</q><i>value</i><q>ville@pumpula.net</q></div>
+          <div id="_0" class="row"><i class="i1">html</i><i class="i2">lang</i><i class="i3">en</i></div>
+          <div id="_1" class="row">  <i class="i1">head</i></div>
+          <div id="_2" class="row">    <i class="i1">title</i></div>
+          <div id="_3" class="row">      <i class="i1">Untitled</i></div>
+          <div id="_4" class="row">  <i class="i1">body</i><i class="i2">class</i><i class="i3">layout</i></div>
+          <div id="_5" class="row">    <i class="i1">p</i><i class="i2">class</i><i class="i3">something</i></div>
+          <div id="_6" class="row">      <i class="i0">Normal textnode</i></div>
+          <div id="_7" class="com">    <i class="i1">p</i><i class="i2">class</i><i class="i3">something else</i></div>
+          <div id="_8" class="com">      <i class="i0">Commented out p with textnode</i></div>
+          <div id="_9" class="row">    <i class="i1">input</i><i class="i2">name</i><i class="i3">username</i><i class="i2">type</i><i class="i3">email</i><i class="i2">value</i><i class="i3">ville@pumpula.net</i></div>
         </div>
       </div>
       <div class="toolbar">
@@ -38,7 +44,7 @@
         <button class="syntax-config" style="color: #f92772;">name</button>
         <button class="syntax-config" style="color: #a6e22d;">attr</button>
         <button class="syntax-config" style="color: #e6db74;">value</button>
-        <button class="syntax-config" style="color: ;">q</button>
+        <button class="syntax-config" style="color: ;">text</button>
         <button class="syntax-config" style="color: ;">s</button>
         <button class="syntax-config" style="color: ;">u</button>
       </div>

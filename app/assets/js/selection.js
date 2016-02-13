@@ -1,4 +1,12 @@
+//Selection (sel) object looks like this:
+//{
+  //'row': <dom element reference>,
+  //'elm': <dom element reference>,
+  //'farthest': 0, // TODO: So you don't reset your column even if you go through a few rows that have only one column or so
+//}
+
 APP.select = {};
+
 //takes new element to select and current selection, returns new selection
 APP.select.element = function (elm, sel) {
   //TODO: collapsing & additive/diffing selection with shift key
@@ -17,50 +25,64 @@ APP.select.element = function (elm, sel) {
 }
 
 APP.select.next = function (sel) {
-  var newElm = sel.elm;
-  var $newElm = $(sel.elm).next();
-  if ($newElm.length !== 0) {
-    newElm = $newElm[0];
+  var $newSelElm = $(sel.elm).next();
+  if ($newSelElm.length !== 0) {
+    return APP.select.element($newSelElm[0], sel);
+  } else {
+    $newSelElm = $(sel.elm).parent().next().children().first();
+    if ($newSelElm.length !== 0) {
+      return APP.select.element($newSelElm[0], sel);
+    }
   }
-  return APP.select.element(newElm, sel);
+  return sel;
 }
 APP.select.prev = function (sel) {
-  var newElm = sel.elm;
-  var $newElm = $(sel.elm).prev();
-  if ($newElm.length !== 0) {
-    newElm = $newElm[0];
+  var $newSelElm = $(sel.elm).prev();
+  if ($newSelElm.length !== 0) {
+    return APP.select.element($newSelElm[0], sel);
+  } else {
+    $newSelElm = $(sel.elm).parent().prev().children().last();
+    if ($newSelElm.length !== 0) {
+      return APP.select.element($newSelElm[0], sel);
+    }
   }
-  return APP.select.element(newElm, sel);
+  return sel;
 }
 APP.select.up = function (sel) {
-  var newElm = sel.elm;
-  var $newElm = $(sel.elm).parent().prev();
+  var $newSelElm = $(sel.elm).parent().prev();
   var index = $(sel.elm).index();
   var children;
 
-  if ($newElm.length !== 0) {
-    $children = $newElm.children();
+  if ($newSelElm.length !== 0) {
+    $children = $newSelElm.children();
     if ($children.length > index) {
-      newElm = $children[index];
-    } else if ($newElm.length !== 0) {
-      newElm = $children[$newElm.length-1];
+      return APP.select.element($children[index], sel);
+    } else if ($newSelElm.length !== 0) {
+      return APP.select.element($children[$newSelElm.length-1], sel);
     }
+    //TODO: implement farthest selection
   }
-  return APP.select.element(newElm, sel);
+  return sel;
 }
 APP.select.down = function select (sel) {
-  var newElm = sel.elm;
-  var $newElm = $(sel.elm).parent().next();
+  var $newSelElm = $(sel.elm).parent().next();
   var index = $(sel.elm).index();
   var children;
 
-  if ($newElm.length !== 0) {
-    $children = $newElm.children();
+  if ($newSelElm.length !== 0) {
+    $children = $newSelElm.children();
     if ($children.length > index) {
-      newElm = $children[index];
-    } else if ($newElm.length !== 0) {
-      newElm = $children[$newElm.length-1];
+      return APP.select.element($children[index], sel);
+    } else if ($newSelElm.length !== 0) {
+      return APP.select.element($children[$newSelElm.length-1], sel);
     }
   }
-  return APP.select.element(newElm, sel);
+  return sel;
+}
+
+APP.select.collapse = function function_name(argument) {
+  // TODO: collapse all children of an element into a [...] or something, that gets skipped when navigating the doc, like in sublime
+}
+APP.select.expand = function function_name(argument) {
+  // TODO: expand collapsed elements
 }

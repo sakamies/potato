@@ -1,3 +1,6 @@
+//Require selection
+//Require keysight
+
 APP.keyboard = {};
 
 APP.keyboard.getModifiers = function (event) {
@@ -10,52 +13,58 @@ APP.keyboard.getModifiers = function (event) {
   }
 }
 
+//TODO: make a keymap that's something like {key+mods: action}
 APP.keyboard.keydown = function (event) {
-  //TODO: check that the event originated from the doc
   var mode = APP.state.mode;
   var sel = APP.state.selection;
-  var key = keysight(event).key;
+  var key = keysight(event).key; //TODO: use as module
   var mod = APP.keyboard.getModifiers(event);
 
   //Navigation & selection
-  if (mode === 'document' && !mod.any) {
-    if (key === 'left') {
-      event.preventDefault();
-      sel = APP.select.prev(sel);
-    }
-    if (key === 'right') {
-      event.preventDefault();
-      sel = APP.select.next(sel);
-    }
-    if (key === 'up') {
-      event.preventDefault();
-      sel = APP.select.up(sel);
-    }
-    if (key === 'down') {
-      event.preventDefault();
-      sel = APP.select.down(sel);
-    }
-    APP.state.selection = sel;
+  if (key === 'left' && !mod.any) {
+    event.preventDefault();
+    sel = APP.select.prev(sel);
+  }
+  else if (key === 'right' && !mod.any) {
+    event.preventDefault();
+    sel = APP.select.next(sel);
+  }
+  else if (key === 'up' && !mod.any) {
+    event.preventDefault();
+    sel = APP.select.up(sel);
+  }
+  else if (key === 'down' && !mod.any) {
+    event.preventDefault();
+    sel = APP.select.down(sel);
   }
 
   //Editing of rows
   if (key === '\t' && !mod.any) {
-    //TODO: mode indenting into their own editing functions, make editing.js or actions.js something
-    var indent = sel.row.firstChild;
     event.preventDefault();
-    if (indent.nodeType === 3) {
-      indent.textContent = indent.textContent + '  '; //TODO: use indentation from config here
-    } else {
-      $(sel.row).prepend('  ');
-    }
+    sel = APP.doc.row.indent(sel);
   }
   if (key === '\t' && mod.shift) {
-    var indent = sel.row.firstChild;
     event.preventDefault();
-    if (indent.nodeType === 3) {
-      indent.textContent = indent.textContent.replace('  ', ''); //TODO: use indentation from config here
-    }
+    sel = APP.doc.row.outdent(sel);
   }
+
+  //add & delete props
+  if (key === ' ' && !mod.any) {
+    event.preventDefault();
+    sel = APP.doc.prop.new(sel);
+  }
+  if (key === '\b' && !mod.any) {
+    event.preventDefault();
+    sel = APP.doc.prop.del(sel);
+  }
+
+  if (key === '\n') {
+    console.log('add row')
+    //TODO: platform especific keymaps because of meta/cmd/ctrl differences
+    event.preventDefault();
+    sel = APP.doc.row.new(sel);
+  }
+
   //add row
   //delete row
   //move row up
@@ -66,4 +75,6 @@ APP.keyboard.keydown = function (event) {
   //add prop
   //delete prop
   //cut copy paste
+
+  APP.state.selection = sel;
 }

@@ -1,10 +1,15 @@
 APP.config = {
 };
 
+APP.config.templates = {
+  'prop': '<i class="i1"> </i>',
+  'row': '<div id="" class="row"><i class="i1"> </i></div>'
+}
 APP.config.indentation = '  '; //TODO: use this in the indent handler
-APP.config.tags = ['A','B','I','P','Q','S','U'];
+APP.config.syntax = {
+};
 
-APP.config.keyboard = {
+APP.config.keymap = {
 
 };
 
