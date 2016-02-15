@@ -4,6 +4,7 @@
 APP.keyboard = {};
 
 APP.keyboard.getModifiers = function (event) {
+  //return unique modifier presses, so there's no need no negate other keys every time
   return {
     shift: event.shiftKey && !event.altKey && !event.ctrlKey && !event.metaKey,
     alt: !event.shiftKey && event.altKey && !event.ctrlKey && !event.metaKey,
@@ -13,8 +14,8 @@ APP.keyboard.getModifiers = function (event) {
   }
 }
 
-//TODO: make a keymap that's something like {key+mods: action}
-//TODO: platform especific keymaps because of meta/cmd/ctrl differences
+//TODO: make a keymap that's something like {key: action, key: action, etc...}
+//TODO: platform especific keymaps? because of meta/cmd/ctrl differences
 APP.keyboard.keydown = function (event) {
   var mode = APP.state.mode;
   var sel = APP.state.selection;
@@ -22,6 +23,8 @@ APP.keyboard.keydown = function (event) {
   var mod = APP.keyboard.getModifiers(event);
 
   //TODO: check if the whole property is selected, if not, then let backspace work as normal
+
+  //TODO: check what class of prop is selected, then check startswith & endswith properties from language config and act accordingly
 
   //Navigation & selection
   if (key === 'left' && !mod.any) {
@@ -71,6 +74,9 @@ APP.keyboard.keydown = function (event) {
 
   //Editing properties
   if (key === ' ' && !mod.any) {
+    //TODO: read keylist from language definition
+    //TODO: detect which key was pressed and compare to language definition
+    //TODO: Add entity type that matches the keypress
     event.preventDefault();
     sel = APP.doc.prop.new(sel);
   }
@@ -78,24 +84,26 @@ APP.keyboard.keydown = function (event) {
     event.preventDefault();
     sel = APP.doc.prop.del(sel);
   }
+  if ((/[0-9]/).test(key) && (mod.meta || mod.ctrl)) {
+    event.preventDefault();
+    console.log(parseInt(key));
+    sel = APP.doc.prop.assign(sel, parseInt(key)-1);
+  }
+
 
   //Undo/redo
   if (key === 'z' && (mod.meta || mod.ctrl)) {
     event.preventDefault();
     sel = APP.doc.history.undo(sel);
   }
-  if (key === 'z' && ((mod.meta && mod.shift) || (mod.ctrl && mod.shift))) {
+  //TODO: make dealing with double modifier keys simpler
+  if (key === 'z' && (event.metaKey && event.shiftKey && !event.altKey && !event.ctrlKey) || (event.ctrlKey && event.shiftKey && !event.altKey && !event.metaKey)) {
     event.preventDefault();
     sel = APP.doc.history.redo();
   }
 
   //move row up
   //move row down
-  //cut copy paste
-
-  //Editing properties
-  //add prop
-  //delete prop
   //cut copy paste
 
   APP.state.selection = sel;

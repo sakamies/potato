@@ -187,71 +187,13 @@ textarea:focus {
 
 .row,
 .com {
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .row i,
 .com i {
   font-style: normal;
   display: inline;
-}
-
-.row i::after,
-.com i::after {
-  content: ' ';
-}
-
-.row .i1,
-.com .i1 {
-  color: #f92772;
-}
-
-.row .i1::-moz-selection,
-.com .i1::-moz-selection {
-  color: white;
-  background: #f92772;
-}
-
-.row .i1::selection,
-.com .i1::selection {
-  color: white;
-  background: #f92772;
-}
-
-.row .i2,
-.com .i2 {
-  white-space: nowrap;
-  color: #a6e22d;
-}
-
-.row .i2::-moz-selection,
-.com .i2::-moz-selection {
-  color: white;
-  background: #a6e22d;
-}
-
-.row .i2::selection,
-.com .i2::selection {
-  color: white;
-  background: #a6e22d;
-}
-
-.row .i3,
-.com .i3 {
-  color: #e6db74;
-  margin-left: 0;
-}
-
-.row .i3::-moz-selection,
-.com .i3::-moz-selection {
-  color: white;
-  background: #e6db74;
-}
-
-.row .i3::selection,
-.com .i3::selection {
-  color: white;
-  background: #e6db74;
 }
 
 .com.com > * {

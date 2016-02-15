@@ -28,38 +28,11 @@
 ///
 .row,
 .com {
-  white-space: pre;
+  white-space: pre-wrap;
 
   i {
     font-style: normal;
     display: inline;
-  }
-  i::after {
-    content: ' ';
-  }
-  //TODO: make syntax specific styles be a partf of app config so the app is not tied to any particular syntax
-  .i1 {
-    color: $red;
-  }
-  .i1::selection {
-    color: white;
-    background: $red;
-  }
-  .i2 {
-    white-space: nowrap;
-    color: $green;
-  }
-  .i2::selection {
-    color: white;
-    background: $green;
-  }
-  .i3 {
-    color: $yellow;
-    margin-left: 0;
-  }
-  .i3::selection {
-    color: white;
-    background: $yellow;
   }
 }
 //
