@@ -10,101 +10,139 @@ APP.keyboard.getModifiers = function (event) {
     alt: !event.shiftKey && event.altKey && !event.ctrlKey && !event.metaKey,
     ctrl: !event.shiftKey && !event.altKey && event.ctrlKey && !event.metaKey,
     meta: !event.shiftKey && !event.altKey && !event.ctrlKey && event.metaKey,
-    any: event.shiftKey || event.altKey || event.ctrlKey || event.metaKey
+    any: event.shiftKey || event.altKey || event.ctrlKey || event.metaKey,
+    metaShift: event.metaKey && event.shiftKey && !event.altKey && !event.ctrlKey,
+    ctrlShift: event.ctrlKey && event.shiftKey && !event.altKey && !event.metaKey,
   }
 }
 
 //TODO: make a keymap that's something like {key: action, key: action, etc...}
 //TODO: platform especific keymaps? because of meta/cmd/ctrl differences
 APP.keyboard.keydown = function (event) {
-  var mode = APP.state.mode;
-  var sel = APP.state.selection;
-  var key = keysight(event).key; //TODO: use as module
+  var sel = APP.selection;
+  var keydef = keysight(event); //TODO: use as module
+  var key = keydef.key;
+  var char = keydef.char;
   var mod = APP.keyboard.getModifiers(event);
 
-  //TODO: check if the whole property is selected, if not, then let backspace work as normal
+  var actions = {
+    selectPrev: function (event) {
+      sel = APP.select.prev(sel);
+      return false;
+    },
+    selectNext: function (event) {
+      sel = APP.select.next(sel);
+      return false;
+    },
+    selectUp: function (event) {
+      sel = APP.select.up(sel);
+      return false;
+    },
+    selectDown: function (event) {
+      sel = APP.select.down(sel);
+      return false;
+    },
+    newRow: function (event) {
+      sel = APP.doc.row.new(sel);
+      return false;
+    },
+    deleteRow: function (event) {
+      sel = APP.doc.row.del(sel);
+      return false;
+    },
+    moveRowUp: function (event) {
+      sel = APP.doc.row.moveUp(sel);
+      return false;
+    },
+    moveRowDown: function (event) {
+      sel = APP.doc.row.moveDown(sel);
+      return false;
+    },
+    indentRow: function (event) {
+      sel = APP.doc.row.indent(sel);
+      return false;
+    },
+    outdentRow: function (event) {
+      sel = APP.doc.row.outdent(sel);
+      return false;
+    },
+    toggleCommentRow: function (event) {
+      console.log('togglecomment');
+      sel = APP.doc.row.toggleComment(sel);
+      return false;
+    },
+    assignPropType: function (event) {
+      console.log('assignPropType()', key, parseInt(key));
+      sel = APP.doc.prop.assign(sel, parseInt(key)-1);
+      return false;
+    },
+    deleteProp: function (event) {
+      var textSel = window.getSelection();
+      sel = APP.doc.prop.del(sel);
+      return false;
+    },
+    addProp: function (event) {
+      console.log('addprop');
+      _TODO!{
+      /*
+        if sel.elm contents are ' ' and they're selected
+        get typed character
+        check char against startsWith of all entity types
+        assign type if applicable
+      */
+      /*
+        if selection collapsed & not at start
+        get typed character
+        get entity type from lang def
+        check char against endswith array
+        assign type from next array with endswith index
+      */
+      /*
+        else type normally, return true
+      */
+      if (false) {
 
-  //TODO: check what class of prop is selected, then check startswith & endswith properties from language config and act accordingly
-
-  //Navigation & selection
-  if (key === 'left' && !mod.any) {
-    event.preventDefault();
-    sel = APP.select.prev(sel);
-  }
-  else if (key === 'right' && !mod.any) {
-    event.preventDefault();
-    sel = APP.select.next(sel);
-  }
-  else if (key === 'up' && !mod.any) {
-    event.preventDefault();
-    sel = APP.select.up(sel);
-  }
-  else if (key === 'down' && !mod.any) {
-    event.preventDefault();
-    sel = APP.select.down(sel);
+        sel = APP.doc.prop.new(sel);
+        return false;
+      }
+      return true;
+    },
+    undo: function (event) {
+      sel = APP.doc.history.undo(sel);
+      return false;
+    },
+    redo: function (event) {
+      sel = APP.doc.history.redo(sel);
+      return false;
+    },
   }
 
-  //Editing rows
-  if (key === '\n') {
-    event.preventDefault();
-    sel = APP.doc.row.new(sel);
-  }
-  if (key === '\b' && (mod.meta || mod.ctrl)) {
-    event.preventDefault();
-    sel = APP.doc.row.del(sel);
-  }
-  if (key === 'up' && mod.ctrl) {
-    //TODO: platform especific keymaps because of meta/cmd/ctrl differences
-    event.preventDefault();
-    sel = APP.doc.row.moveUp(sel);
-  }
-  if (key === 'down' && mod.ctrl) {
-    //TODO: platform especific keymaps because of meta/cmd/ctrl differences
-    event.preventDefault();
-    sel = APP.doc.row.moveDown(sel);
-  }
-  if (key === '\t' && !mod.any) {
-    event.preventDefault();
-    sel = APP.doc.row.indent(sel);
-  }
-  if (key === '\t' && mod.shift) {
-    event.preventDefault();
-    sel = APP.doc.row.outdent(sel);
+  var keymap = {
+    selectPrev: (key === 'left' && !mod.any),
+    selectNext: (key === 'right' && !mod.any),
+    selectUp: (key === 'up' && !mod.any),
+    selectDown: (key === 'down' && !mod.any),
+    newRow: (key === '\n'),
+    deleteRow: (key === '\b' && (mod.meta || mod.ctrl)),
+    moreRowUp: (key === 'up' && mod.ctrl),
+    moveRowDown: (key === 'down' && mod.ctrl),
+    indentRow: (key === '\t' && !mod.any),
+    outdentRow: (key === '\t' && mod.shift),
+    toggleCommentRow: (key === '/' && (mod.metaShift || mod.ctrlShift)),
+    assignPropType: ((/[0-9]/).test(key) && (mod.meta || mod.ctrl)),
+    deleteProp: (key === '\b' && !mod.any),
+    addProp: (/^[a-z0-9!"#$%&'()*+,.\/:;<=>?@\[\] ^_`{|}~-]/.test(key) && !mod.any),
+    undo: (key === 'z' && (mod.meta || mod.ctrl)),
+    redo: (key === 'z' && (mod.metaShift || mod.ctrlShift)),
   }
 
-  //Editing properties
-  if (key === ' ' && !mod.any) {
-    //TODO: read keylist from language definition
-    //TODO: detect which key was pressed and compare to language definition
-    //TODO: Add entity type that matches the keypress
-    event.preventDefault();
-    sel = APP.doc.prop.new(sel);
-  }
-  if (key === '\b' && !mod.any) {
-    event.preventDefault();
-    sel = APP.doc.prop.del(sel);
-  }
-  if ((/[0-9]/).test(key) && (mod.meta || mod.ctrl)) {
-    event.preventDefault();
-    console.log(parseInt(key));
-    sel = APP.doc.prop.assign(sel, parseInt(key)-1);
+  for (action in keymap) {
+    if (keymap[action] && keymap.hasOwnProperty(action)) {
+      if (actions[action](event) == false) { //action returns true or false, telling if the browser default should be supressed
+        event.preventDefault();
+      }
+    }
   }
 
-
-  //Undo/redo
-  if (key === 'z' && (mod.meta || mod.ctrl)) {
-    event.preventDefault();
-    sel = APP.doc.history.undo(sel);
-  }
-  //TODO: make dealing with double modifier keys simpler
-  if (key === 'z' && (event.metaKey && event.shiftKey && !event.altKey && !event.ctrlKey) || (event.ctrlKey && event.shiftKey && !event.altKey && !event.metaKey)) {
-    event.preventDefault();
-    sel = APP.doc.history.redo();
-  }
-
-  //move row up
-  //move row down
-  //cut copy paste
-
-  APP.state.selection = sel;
+  APP.selection = sel;
 }

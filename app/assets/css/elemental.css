@@ -197,6 +197,7 @@ textarea:focus {
 }
 
 .com.com > * {
+  font-style: italic;
   color: #75715e;
 }
 
@@ -211,7 +212,8 @@ textarea:focus {
 }
 
 .mode-document .document :focus {
-  outline: none;
+  outline: 1px solid;
+  outline-offset: 1px;
 }
 
 .mode-property .document :focus {

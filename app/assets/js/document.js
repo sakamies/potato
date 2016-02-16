@@ -11,7 +11,8 @@ APP.doc = {
   history: {
     index: -1,
     data: []
-  }, //undo stack //TODO: write a simple manager
+  },
+  'lastid': 9,
 };
 
 
@@ -26,6 +27,8 @@ APP.doc.open = function (data) {
     return `
       .e${i} {
         color: ${ent.color};
+        margin-left: ${ent.margin[0]}ch;
+        margin-right: ${ent.margin[1]}ch;
       }
       .e${i}::before {
         content: '${ent.before}';
@@ -102,11 +105,23 @@ APP.doc.row.del = function (sel) {
 }
 
 APP.doc.row.moveUp = function (sel) {
+  $row = $(sel.row);
+  var $prev = $row.prev();
+  if ($prev.length != 0) {
+    $row.after($prev);
+  }
+
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel;
 }
 
 APP.doc.row.moveDown = function (sel) {
+  $row = $(sel.row);
+  var $next = $row.next();
+  if ($next.length != 0) {
+    $row.before($next);
+  }
+
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel;
 }
@@ -126,6 +141,13 @@ APP.doc.row.outdent = function (sel) {
   if (indentation.nodeType === 3) {
     indentation.textContent = indentation.textContent.replace('  ', ''); //TODO: use indentation from config
   }
+  APP.doc.history.add(APP.doc.elm.innerHTML);
+  return sel; //indenting does not modify selection
+}
+APP.doc.row.toggleComment = function (sel) {
+  sel.row.classList.toggle('row');
+  sel.row.classList.toggle('com');
+
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel; //indenting does not modify selection
 }

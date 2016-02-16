@@ -41,6 +41,7 @@
 .com {
   //Increase specificity with double class name
   &.com > * {
+    font-style: italic;
     color: $gray1;
   }
   &.com > *::selection {
@@ -52,7 +53,8 @@
 // Document UI States
 //
 .mode-document .document :focus {
-  outline: none;
+  outline: 1px solid;
+  outline-offset: 1px;
 }
 .mode-property .document :focus {
   outline: 1px solid;

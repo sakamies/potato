@@ -5,6 +5,12 @@
   //'farthest': 0, // TODO: So you don't reset your column even if you go through a few rows that have only one column or so
 //}
 
+APP.selection = {
+  'elm': null,
+  'row': null,
+  'farthest': 0,
+};
+
 APP.select = {};
 
 //takes new element to select and current selection, returns new selection

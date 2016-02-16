@@ -11,6 +11,7 @@ APP.doc.language = {
       next: ['id', 'class', 'attribute'],
       before: '', //always render this text before an entity of this type
       after: '', //always render this text after an entity of this type
+      margin: [0,0],
       removalDeletes: ['row'], //if this entity is deleted, what goes with it
     },
     {
@@ -19,8 +20,9 @@ APP.doc.language = {
       startsWith: [],
       endsWith: [':'],
       next: ['value'],
-      before: ' ',
+      before: '',
       after: ':',
+      margin: [1,0],
       removalDeletes: ['+ .value'], //TODO: how to configure deleting next something untils next something?
     },
     {
@@ -29,8 +31,9 @@ APP.doc.language = {
       startsWith: [''],
       endsWith: [' '],
       next: ['attribute'],
-      before: ' ',
+      before: '',
       after: '',
+      margin: [0,0],
       removalDeletes: [''],
     },
     {
@@ -41,6 +44,7 @@ APP.doc.language = {
       next: ['class', 'attribute'],
       before: '#',
       after: '',
+      margin: [0,0],
       removalDeletes: [''],
     },
     {
@@ -51,6 +55,7 @@ APP.doc.language = {
       next: ['class', 'attribute'],
       before: '.',
       after: '',
+      margin: [0,0],
       removalDeletes: [''],
     },
     {
@@ -61,6 +66,7 @@ APP.doc.language = {
       next: ['row'],
       before: '',
       after: '',
+      margin: [0,0],
       removalDeletes: [''],
     },
     {
@@ -69,8 +75,9 @@ APP.doc.language = {
       startsWith: ['//'],
       endsWith: ['//'],
       next: ['text'],
-      before: ' //',
-      after: '// ',
+      before: '//',
+      after: '//',
+      margin: [0,0],
       removalDeletes: [''],
     },
   ],
