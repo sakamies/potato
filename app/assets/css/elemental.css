@@ -10,6 +10,7 @@
 
 html, body {
   height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -105,42 +106,23 @@ textarea:focus {
 }
 
 .layout {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: start;
-  -webkit-justify-content: flex-start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
-  -webkit-box-align: stretch;
-  -webkit-align-items: stretch;
-      -ms-flex-align: stretch;
-          align-items: stretch;
-  -webkit-align-content: stretch;
-      -ms-flex-line-pack: stretch;
-          align-content: stretch;
+  position: fixed;
   height: 100%;
   width: 100%;
 }
 
 .document {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1 0 auto;
-      -ms-flex: 1 0 auto;
-          flex: 1 0 auto;
+  overflow: auto;
+  height: 100%;
+  min-height: calc(100vh - 49px);
+  padding-bottom: 49px;
 }
 
 .toolbar {
-  -webkit-box-flex: 0;
-  -webkit-flex: 0 0 auto;
-      -ms-flex: 0 0 auto;
-          flex: 0 0 auto;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -150,9 +132,17 @@ textarea:focus {
   -webkit-flex-direction: row;
       -ms-flex-direction: row;
           flex-direction: row;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  height: 49px;
   background-color: #272822;
-  border: 1px solid #383830;
-  border-width: 1px 0;
+  border-top: 1px solid #383830;
 }
 
 .toolbar > * {
@@ -163,6 +153,8 @@ textarea:focus {
 }
 
 .toolbar button {
+  text-align: left;
+  white-space: nowrap;
   -webkit-box-flex: 0;
   -webkit-flex: 0 0 auto;
       -ms-flex: 0 0 auto;
@@ -173,7 +165,6 @@ textarea:focus {
   font-family: "Menlo", monospace;
   font-size: 16px;
   line-height: 24px;
-  padding: 12px 1ch;
   color: #f8f8f2;
   background: #272822;
 }
@@ -183,6 +174,10 @@ textarea:focus {
   white-space: nowrap;
   padding-left: 1ch;
   padding-right: 1ch;
+}
+
+.rows {
+  padding: 12px 1ch;
 }
 
 .row,
@@ -196,9 +191,26 @@ textarea:focus {
   display: inline;
 }
 
-.com.com > * {
-  font-style: italic;
+.hide-syntax .row i,
+.hide-syntax .com i {
+  margin: 0 1ch 0 0 !important;
+}
+
+.hide-syntax .row i::before,
+.hide-syntax .row i::after,
+.hide-syntax .com i::before,
+.hide-syntax .com i::after {
+  display: none !important;
+}
+
+.com {
   color: #75715e;
+  font-style: italic;
+}
+
+.com.com > * {
+  font-style: inherit;
+  color: inherit;
 }
 
 .com.com > *::-moz-selection {
@@ -213,12 +225,10 @@ textarea:focus {
 
 .mode-document .document :focus {
   outline: 1px solid;
-  outline-offset: 1px;
 }
 
 .mode-property .document :focus {
   outline: 1px solid;
-  outline-offset: 1px;
 }
 
 .selected {

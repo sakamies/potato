@@ -1,8 +1,6 @@
 //Require selection
 //Require config
 
-//TODO: each edit should add something to the undo stack
-
 APP.doc = {
   language: null,
   elm: null, //refers to the dom element that contains this document
@@ -27,8 +25,8 @@ APP.doc.open = function (data) {
     return `
       .e${i} {
         color: ${ent.color};
-        margin-left: ${ent.margin[0]}ch;
-        margin-right: ${ent.margin[1]}ch;
+        margin-left: ${ent.spacing[0]}ch;
+        margin-right: ${ent.spacing[1]}ch;
       }
       .e${i}::before {
         content: '${ent.before}';
@@ -44,9 +42,9 @@ APP.doc.open = function (data) {
   });
   var css = '<style>'+cssArray.join('')+'</style>';
   $(APP.doc.elm).prepend(css);
+  //TODO: Update helper ui/toolbar to match settings
 
 
-  //TODO: Update ui to match settings
   var newSel = APP.select.element(APP.doc.elm.querySelector('#_0 > :first-child'));
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return newSel;
@@ -75,7 +73,6 @@ APP.doc.history.redo = function (sel) {
 }
 
 APP.doc.history.add = function (data) {
-  //TODO: there's something flaky about adding history in the editing functions, sometimes undo skips two steps backwards
   APP.doc.history.data = APP.doc.history.data.slice(0, APP.doc.history.index + 1);
   APP.doc.history.data.push(data);
   APP.doc.history.index = APP.doc.history.index + 1;
@@ -129,7 +126,7 @@ APP.doc.row.moveDown = function (sel) {
 APP.doc.row.indent = function (sel) {
   var indentation = sel.row.firstChild;
   if (indentation.nodeType === 3) {
-    indentation.textContent = indentation.textContent + '  '; //TODO: use indentation from config
+    indentation.textContent = indentation.textContent + '  '; //TODO: use inline style padding as indentation instead of characters
   } else {
     $(sel.row).prepend('  ');
   }
@@ -139,7 +136,7 @@ APP.doc.row.indent = function (sel) {
 APP.doc.row.outdent = function (sel) {
   var indentation = sel.row.firstChild;
   if (indentation.nodeType === 3) {
-    indentation.textContent = indentation.textContent.replace('  ', ''); //TODO: use indentation from config
+    indentation.textContent = indentation.textContent.replace('  ', '');
   }
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel; //indenting does not modify selection
@@ -152,6 +149,11 @@ APP.doc.row.toggleComment = function (sel) {
   return sel; //indenting does not modify selection
 }
 
+APP.doc.prop.getType = function (sel) {
+  var typeClass = sel.elm.className.match(/e[0-9]/)[0];
+  var type = parseInt(typeClass.substring(1));
+  return type;
+}
 APP.doc.prop.new = function (sel, type) {
   var template = APP.config.templates.prop;
   var prop = $(sel.elm).after(template).next()[0];
@@ -164,7 +166,13 @@ APP.doc.prop.new = function (sel, type) {
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return newSel;
 }
+APP.doc.prop.init = function (sel) {
+  sel.elm.innerHTML = ' ';
+  sel = APP.select.element(sel.elm);
 
+  APP.doc.history.add(APP.doc.elm.innerHTML);
+  return sel;
+}
 APP.doc.prop.del = function (sel) {
   var newSel = APP.select.prev(sel);
   var $elm = $(sel.elm);

@@ -10,5 +10,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
   APP.doc.elm.addEventListener('mousedown', APP.pointer.mousedown);
   APP.doc.elm.addEventListener('mouseup', APP.pointer.mouseup);
   APP.doc.elm.addEventListener('click', APP.pointer.click);
-  APP.doc.elm.addEventListener('keydown', APP.keyboard.keydown);
+  APP.doc.elm.addEventListener('keydown', APP.input.keydown);
+  APP.doc.elm.addEventListener('input', APP.input.input);
 });
