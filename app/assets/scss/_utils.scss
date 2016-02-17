@@ -1,0 +1,15 @@
+@function black($opacity: 1) {
+  @return rgba(0,0,0,$opacity);
+}
+@function white($opacity: 1) {
+  @return rgba(255,255,255,$opacity);
+}
+@function gray($amount, $opacity: 1) {
+  @return rgba($amount, $amount, $amount, $opacity);
+}
+@function color($color, $opacity: 1) {
+  @return rgba($color, $opacity);
+}
+@function curve($ax, $ay, $bx, $by) {
+  @return cubic-bezier($ax, $ay, $bx, $by);
+}

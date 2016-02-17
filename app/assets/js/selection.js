@@ -16,11 +16,21 @@ APP.select = {};
 //takes new element to select and current selection, returns new selection
 APP.select.element = function (elm, sel) {
   //TODO: collapsing & additive/diffing selection with shift key
-  if (sel) {
-    //take care of old selection, if there is such
-    sel.elm.parentElement.classList.remove('selected');
-    sel.elm.classList.remove('focus');
-    sel.elm.contentEditable = false;
+  if (sel && sel.elm !== null) {
+    var textContent = sel.elm.textContent;
+    var allowedContent = APP.doc.language.entities[APP.doc.prop.getType(sel)].contains;
+    //delete prop if empty and can't be whitespace only, else deselect prop
+    if (textContent === ' ' && allowedContent !== ' ') {
+      if (sel.elm.parentElement.children.length === 1) {
+        sel.row.remove();
+      } else {
+        sel.elm.remove();
+      }
+    } else {
+      sel.elm.parentElement.classList.remove('selected');
+      sel.elm.classList.remove('focus');
+      sel.elm.contentEditable = false;
+    }
   }
 
   elm.parentElement.classList.add('selected');

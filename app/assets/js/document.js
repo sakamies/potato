@@ -15,8 +15,13 @@ APP.doc = {
 
 
 //File handling
+APP.doc.new = function (language) {
+  var newDoc = document.querySelector('#empty-document').content.querySelector('.document');
+  return APP.doc.open(newDoc);
+}
 APP.doc.open = function (data) {
-  APP.doc.elm = data;
+  var doc = $('.document').html(data)[0];
+  APP.doc.elm = doc;
   //TODO: determine language type
   //TODO: parse language styles from language definition
 
@@ -80,11 +85,15 @@ APP.doc.history.add = function (data) {
 
 
 
-
 //Takes selection, returns new selection
 APP.doc.row.new = function (sel) {
   //TODO: if the current selection has children, add new first child to it, if it doesn't, add a new sibling, so, indent +1 or indent ==
-  var template = APP.config.templates.row;
+  var indentation = parseInt(sel.row.style.paddingLeft);
+  var nextIndentation = parseInt($(sel.row).next().css('padding-left'));
+  if (nextIndentation && indentation < nextIndentation) {
+    indentation = nextIndentation;
+  }
+  var template = APP.config.templates.row.replace('0ch', indentation + 'ch');
   var firstProp = $(sel.row).after(template).next().children().first()[0];
   var newSel = APP.select.element(firstProp, sel);
   APP.doc.history.add(APP.doc.elm.innerHTML);
@@ -96,7 +105,7 @@ APP.doc.row.del = function (sel) {
   if (newSel === sel) {
     newSel = APP.select.up(sel);
   }
-  $(sel.row).remove();
+  sel.row.remove();
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return newSel;
 }
@@ -124,20 +133,12 @@ APP.doc.row.moveDown = function (sel) {
 }
 
 APP.doc.row.indent = function (sel) {
-  var indentation = sel.row.firstChild;
-  if (indentation.nodeType === 3) {
-    indentation.textContent = indentation.textContent + '  '; //TODO: use inline style padding as indentation instead of characters
-  } else {
-    $(sel.row).prepend('  ');
-  }
+  sel.row.style.paddingLeft = (parseInt(sel.row.style.paddingLeft) + 2) + 'ch';
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel; //indentationing does not modify selection
 }
 APP.doc.row.outdent = function (sel) {
-  var indentation = sel.row.firstChild;
-  if (indentation.nodeType === 3) {
-    indentation.textContent = indentation.textContent.replace('  ', '');
-  }
+  sel.row.style.paddingLeft = (parseInt(sel.row.style.paddingLeft) - 2) + 'ch';
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel; //indenting does not modify selection
 }
@@ -152,7 +153,7 @@ APP.doc.row.toggleComment = function (sel) {
 APP.doc.prop.getType = function (sel) {
   var typeClass = sel.elm.className.match(/e[0-9]/)[0];
   var type = parseInt(typeClass.substring(1));
-  return type;
+  return type; //number that matches the index of the entity in the language definition
 }
 APP.doc.prop.new = function (sel, type) {
   var template = APP.config.templates.prop;
@@ -169,27 +170,60 @@ APP.doc.prop.new = function (sel, type) {
 APP.doc.prop.init = function (sel) {
   sel.elm.innerHTML = ' ';
   sel = APP.select.element(sel.elm);
-
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel;
 }
 APP.doc.prop.del = function (sel) {
-  var newSel = APP.select.prev(sel);
-  var $elm = $(sel.elm);
-  if ($elm.siblings().length === 0) {
-    $(sel.row).remove();
+  if (sel.row.children.length === 0) {
+    sel.row.remove();
   } else {
-    $(sel.elm).remove();
+    sel.elm.remove();
   }
   APP.doc.history.add(APP.doc.elm.innerHTML);
-  return newSel;
+  //TODO: returns the deleted selection? that's no good!;
+  return {elm: null, row: null};
+}
+APP.doc.prop.delBW = function (sel) {
+  var prev = APP.select.prev(sel);
+  var next;
+
+  if (prev !== sel) {
+    APP.doc.prop.del(sel);
+    return prev;
+  } else {
+    next = APP.select.next(sel);
+    if (next !== sel) {
+      APP.doc.prop.del(sel);
+      return next;
+    }
+  }
+  return APP.doc.prop.init(sel);
+}
+APP.doc.prop.delFW = function (sel) {
+  var next = APP.select.next(sel);
+  var prev;
+
+  if (next !== sel) {
+    APP.doc.prop.del(sel);
+    return next;
+  } else {
+    prev = APP.select.prev(sel);
+    if (prev !== sel) {
+      APP.doc.prop.del(sel);
+      return prev;
+    }
+  }
+  return APP.doc.prop.init(sel);
 }
 
 APP.doc.prop.assign = function (sel, type) {
-  var className = sel.elm.className;
-  className = className.replace(/e[0-9]/, '');
-  sel.elm.className = className;
-  sel.elm.classList.add('e' + type);
-  APP.doc.history.add(APP.doc.elm.innerHTML);
+  if (type === -1) {type = 9};
+  if (type < APP.doc.language.entities.length) {
+    var className = sel.elm.className;
+    className = className.replace(/e[0-9]/, '');
+    sel.elm.className = className;
+    sel.elm.classList.add('e' + type);
+    APP.doc.history.add(APP.doc.elm.innerHTML);
+  }
   return sel;
 }

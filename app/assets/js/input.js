@@ -18,6 +18,9 @@ APP.input.getModifiers = function (event) {
 
 //TODO: make a keymap that's something like {key: action, key: action, etc...}
 //TODO: platform especific keymaps? because of meta/cmd/ctrl differences
+APP.input.keypress = function (event) {
+  event.preventDefault();
+}
 APP.input.keydown = function (event) {
   var sel = APP.selection;
   var keydef = keysight(event); //TODO: use as module
@@ -26,8 +29,29 @@ APP.input.keydown = function (event) {
   var mod = APP.input.getModifiers(event);
 
   var actions = {
+    new: function (event) {
+      alert('open!');
+      return false;
+    },
+    open: function (event) {
+      //TODO: open dom from localstorage, just like APP.doc.new()
+      alert('open!');
+      return false;
+    },
+    save: function (event) {
+      //TODO: save dom to localstorage
+      alert('save!');
+      return false;
+    },
+    undo: function (event) {
+      sel = APP.doc.history.undo(sel);
+      return false;
+    },
+    redo: function (event) {
+      sel = APP.doc.history.redo(sel);
+      return false;
+    },
     toggleSyntax: function (event) {
-      console.log('toggle syntax');
       APP.doc.elm.classList.toggle('show-syntax');
       APP.doc.elm.classList.toggle('hide-syntax');
       return false;
@@ -52,6 +76,9 @@ APP.input.keydown = function (event) {
       sel = APP.doc.row.new(sel);
       return false;
     },
+    //TODO: delete row forward delete deleteRowFW with delete
+    //TODO: delete row backward delete deleteRowBW with backspace
+    //TODO: add functions for these into document.js
     deleteRow: function (event) {
       sel = APP.doc.row.del(sel);
       return false;
@@ -77,11 +104,16 @@ APP.input.keydown = function (event) {
       return false;
     },
     assignPropType: function (event) {
+      //-1, because pressing 1 should assing the first thing in the entities array and pressing 0 should assing type 9 accordingly
       sel = APP.doc.prop.assign(sel, parseInt(key)-1);
       return false;
     },
-    deleteProp: function () {
-      sel = APP.doc.prop.del(sel);
+    deletePropBW: function () {
+      sel = APP.doc.prop.delBW(sel);
+      return false;
+    },
+    deletePropFW: function () {
+      sel = APP.doc.prop.delFW(sel);
       return false;
     },
     eraseProp: function (event) {
@@ -92,7 +124,11 @@ APP.input.keydown = function (event) {
 
       //if typed backspace and the prop is in initial state, delete it
       if (textContent === ' ' && allSelected) {
-        sel = APP.doc.prop.del(sel);
+        if (key === '\b') {
+          sel = APP.doc.prop.delBW(sel);
+        } else {
+          sel = APP.doc.prop.delFW(sel);
+        }
         APP.selection = sel;
         return false;
       }
@@ -102,22 +138,20 @@ APP.input.keydown = function (event) {
         APP.selection = sel;
         return false;
       }
+      return true;
     },
     addProp: function (event) {
       sel = APP.doc.prop.new(sel);
       return false;
     },
-    undo: function (event) {
-      sel = APP.doc.history.undo(sel);
-      return false;
-    },
-    redo: function (event) {
-      sel = APP.doc.history.redo(sel);
-      return false;
-    },
   }
 
   var keymap = {
+    open: (key === 'o' && (mod.meta || mod.ctrl)),
+    save: (key === 's' && (mod.meta || mod.ctrl)),
+    undo: (key === 'z' && (mod.meta || mod.ctrl)),
+    redo: (key === 'z' && (mod.metaShift || mod.ctrlShift)),
+
     toggleSyntax: (key === 'esc' && mod.alt),
     selectPrev: (key === 'left' && !mod.any),
     selectNext: (key === 'right' && !mod.any),
@@ -131,11 +165,10 @@ APP.input.keydown = function (event) {
     outdentRow: (key === '\t' && mod.shift),
     toggleCommentRow: (key === '/' && (mod.metaShift || mod.ctrlShift)),
     addProp: (key === '\n' && mod.alt),
-    deleteProp: (key === '\b' && mod.alt),
-    eraseProp: (key === '\b' && !mod.any),
+    deletePropBW: (key === '\b' && mod.alt),
+    deletePropFW: (key === 'delete' && mod.alt),
+    eraseProp: ((key === '\b' && !mod.any) || key === 'delete' && !mod.any),
     assignPropType: ((/[0-9]/).test(key) && (mod.meta || mod.ctrl)),
-    undo: (key === 'z' && (mod.meta || mod.ctrl)),
-    redo: (key === 'z' && (mod.metaShift || mod.ctrlShift)),
     //selectAll, selectNone, cut/copy/paste(needs some work on multiselection)
   }
 
@@ -159,7 +192,7 @@ APP.input.input = function (event) {
   var textRange = textSel.getRangeAt(0);
   var allSelected = sel.elm.textContent.length === textRange.startOffset + textRange.endOffset
 
-  //if prop gets emptied somehow, reinit it
+  //if prop gets emptied, reinit it
   if (textContent === '') {
     sel = APP.doc.prop.init(sel);
     APP.selection = sel;
@@ -167,7 +200,7 @@ APP.input.input = function (event) {
   }
 
   //if prop is of default type, try figuring out what type the user wants by looking at the first typed character
-  if (textContent.length < 3 && selElmType === 0) {
+  else if (textContent.length < 3 && selElmType === 0) {
     for (var i = 0; i < APP.doc.language.entities.length; i++) {
       if (APP.doc.language.entities[i].startsWith.indexOf(textContent) !== -1) {
         sel = APP.doc.prop.init(sel);
@@ -178,14 +211,13 @@ APP.input.input = function (event) {
     }
   }
   //if the prop has some content, check the last inserted char to determine if the user wants to start a new prop of some type
-  if (textContent.length > 1 && textSel.isCollapsed && textRange.endOffset === textContent.length) {
+  else if (textContent.length > 1 && textSel.isCollapsed && textRange.endOffset === textContent.length) {
     var lastChar = textContent.substring(textContent.length - 1);
     var nextType = APP.doc.language.entities[selElmType].endsWith.indexOf(lastChar);
     if (nextType !== -1) {
       nextType = APP.doc.language.entities[selElmType].next[nextType];
       for (var i = 0; i < APP.doc.language.entities.length; i++) {
         if (APP.doc.language.entities[i].name === nextType) {
-          console.log(nextType, i);
           sel.elm.innerHTML = textContent.substr(0, textContent.length - 1);
           sel = APP.doc.prop.new(sel, i);
           APP.selection = sel;

@@ -31,10 +31,25 @@
 .row,
 .com {
   white-space: pre-wrap;
+  // border-bottom: 1px solid white(0);
+
+  &.selected {
+    background: $gray3;
+    // border-color: white(.1);
+  }
+  &.hilite {
+    background: $gray3;
+  }
 
   i {
     font-style: normal;
     display: inline;
+  }
+  :focus {
+    //border-bottom: 4px solid;
+    // outline: 2px solid;
+    // outline-offset: 2px;
+    outline: none;
   }
 }
 .hide-syntax {
@@ -65,21 +80,4 @@
     color: white;
     background-color: $light;
   }
-}
-//
-// Document UI States
-//
-.mode-document .document :focus {
-  outline: 1px solid;
-  //outline-offset: 1px;
-}
-.mode-property .document :focus {
-  outline: 1px solid;
-  //outline-offset: 1px;
-}
-.selected {
-  background: $gray3;
-}
-.hilite {
-  background: $gray3;
 }

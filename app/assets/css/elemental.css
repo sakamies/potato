@@ -185,10 +185,25 @@ textarea:focus {
   white-space: pre-wrap;
 }
 
+.row.selected,
+.com.selected {
+  background: #383830;
+}
+
+.row.hilite,
+.com.hilite {
+  background: #383830;
+}
+
 .row i,
 .com i {
   font-style: normal;
   display: inline;
+}
+
+.row :focus,
+.com :focus {
+  outline: none;
 }
 
 .hide-syntax .row i,
@@ -221,22 +236,6 @@ textarea:focus {
 .com.com > *::selection {
   color: white;
   background-color: #f8f8f2;
-}
-
-.mode-document .document :focus {
-  outline: 1px solid;
-}
-
-.mode-property .document :focus {
-  outline: 1px solid;
-}
-
-.selected {
-  background: #383830;
-}
-
-.hilite {
-  background: #383830;
 }
 
 /*# sourceMappingURL=elemental.css.map */
