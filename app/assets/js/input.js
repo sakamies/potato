@@ -88,6 +88,7 @@ APP.input.keydown = function (event) {
         return false;
       } else if (APP.utils.elementIsText(sel.elm)) {
         sel = APP.select.element(sel.elm, sel);
+        APP.doc.history.add(APP.doc.elm.innerHTML);
         return true;
       } else {
         sel = APP.select.text(sel);

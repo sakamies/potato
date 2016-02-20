@@ -24,8 +24,6 @@ APP.select.text = function (sel) {
   sel.elm.contentEditable = true;
   sel.elm.focus();
   sel.elm.classList.add('editing');
-  // var range = document.createRange();
-  // range.selectNode(sel.elm);
   window.getSelection().selectAllChildren(sel.elm);
   return sel;
 }
@@ -122,9 +120,10 @@ APP.select.down = function select (sel) {
   }
 }
 
-APP.select.collapse = function function_name(argument) {
+APP.select.collapse = function (sel) {
   // TODO: collapse all children of an element into a [...] or something, that gets skipped when navigating the doc, like in sublime
+  //TODO: needs some logig to selection navigation when elements are collapsed
 }
-APP.select.expand = function function_name(argument) {
+APP.select.expand = function (sel) {
   // TODO: expand collapsed elements
 }
