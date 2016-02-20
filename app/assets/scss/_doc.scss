@@ -8,60 +8,59 @@
 // u
 // because i'm lazy
 
+// $em: 16px;
+// $vx: 24px;
+// $hx: 1ch;
 
 .document {
   font-family: $font-mono;
   font-size: $em;
   line-height: $vx;
   color: $light;
-  background: $dark;
+  background-color: $dark;
 }
 .rownums {
   text-align: right;
-  white-space: nowrap;
   padding-left: 1ch;
   padding-right: 1ch;
 }
 .rows {
-  padding: $vx/2 1ch;
 }
-//
-// Regular row
-///
-.row,
-.com {
-  white-space: pre-wrap;
-  // border-bottom: 1px solid white(0);
-
-  &.selected {
-    background: $gray3;
-    // border-color: white(.1);
-  }
-  &.hilite {
-    background: $gray3;
-  }
-
-  i {
-    font-style: normal;
-    display: inline;
-  }
-  :focus {
-    //border-bottom: 4px solid;
-    // outline: 2px solid;
-    // outline-offset: 2px;
-    outline: none;
-  }
+.row {
+  padding: 0 .5ch 0;
+  border-radius: 4px;
 }
+i {
+  font-style: normal;
+  display: inline;
+}
+
+.selected {
+  // box-shadow: inset 0px 0px 0px 1px currentColor;
+  box-shadow: inset 0px 0px 0px 1px white(.8);
+  //background-color: $gray3;
+}
+i.selected {
+  padding: 2px 0;
+  border-radius: 3px;
+}
+.focus {
+
+}
+:focus {
+  outline: none;
+}
+i.editing {
+  padding: 0;
+}
+
 .hide-syntax {
-  .row,
-  .com {
-    i {
-      margin: 0 1ch 0 0 !important;
-    }
-    i::before,
-    i::after {
-      display: none !important;
-    }
+  i {
+    margin: 0 1ch 0 0 !important;
+  }
+  i::before,
+  i::after {
+    display: none !important;
   }
 }
 //

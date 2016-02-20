@@ -20,10 +20,14 @@ APP.doc.new = function (language) {
   return APP.doc.open(newDoc);
 }
 APP.doc.open = function (data) {
-  var doc = $('.document').html(data)[0];
+  var doc = document.querySelector('.document');
+  doc.innerHTML = $(data).html();
   APP.doc.elm = doc;
+
   //TODO: determine language type
   //TODO: parse language styles from language definition
+
+  //TODO: reading a file in should generate ids for rows
 
   //TODO: this needs its own module for parsing and stuff
   var cssArray = APP.doc.language.entities.map(function(ent, i) {
@@ -49,12 +53,13 @@ APP.doc.open = function (data) {
   $(APP.doc.elm).prepend(css);
   //TODO: Update helper ui/toolbar to match settings
 
-
-  var newSel = APP.select.element(APP.doc.elm.querySelector('#_0 > :first-child'));
+  var newSel = APP.select.element(APP.doc.elm.querySelector('.rows > :first-child'));
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return newSel;
 }
-APP.doc.save = function (data) {
+APP.doc.save = function (sel) {
+  localStorage.setItem('document', APP.doc.elm.outerHTML);
+  return sel;
 }
 
 
@@ -88,8 +93,8 @@ APP.doc.history.add = function (data) {
 //Takes selection, returns new selection
 APP.doc.row.new = function (sel) {
   //TODO: if the current selection has children, add new first child to it, if it doesn't, add a new sibling, so, indent +1 or indent ==
-  var indentation = parseInt(sel.row.style.paddingLeft);
-  var nextIndentation = parseInt($(sel.row).next().css('padding-left'));
+  var indentation = parseInt(sel.row.style.marginLeft);
+  var nextIndentation = parseInt($(sel.row).next().css('margin-left'));
   if (nextIndentation && indentation < nextIndentation) {
     indentation = nextIndentation;
   }
@@ -133,18 +138,17 @@ APP.doc.row.moveDown = function (sel) {
 }
 
 APP.doc.row.indent = function (sel) {
-  sel.row.style.paddingLeft = (parseInt(sel.row.style.paddingLeft) + 2) + 'ch';
+  sel.row.style.marginLeft = (parseInt(sel.row.style.marginLeft) + 2) + 'ch';
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel; //indentationing does not modify selection
 }
 APP.doc.row.outdent = function (sel) {
-  sel.row.style.paddingLeft = (parseInt(sel.row.style.paddingLeft) - 2) + 'ch';
+  sel.row.style.marginLeft = (parseInt(sel.row.style.marginLeft) - 2) + 'ch';
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel; //indenting does not modify selection
 }
 APP.doc.row.toggleComment = function (sel) {
   sel.row.classList.toggle('row');
-  sel.row.classList.toggle('com');
 
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel; //indenting does not modify selection

@@ -18,7 +18,7 @@ APP.config.colors = [
 ]
 APP.config.templates = {
   'prop': '<i class=""> </i>',
-  'row': '<div id="" class="row" style="padding-left: 0ch"><i class="e0"> </i></div>'
+  'row': '<div id="" class="row" style="margin-left: 0ch"><i class="e0"> </i></div>'
 }
 APP.config.indentation = '  '; //TODO: use this in the indent handler
 

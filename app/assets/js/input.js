@@ -30,17 +30,15 @@ APP.input.keydown = function (event) {
 
   var actions = {
     new: function (event) {
-      alert('open!');
+      sel = APP.doc.new();
       return false;
     },
     open: function (event) {
-      //TODO: open dom from localstorage, just like APP.doc.new()
-      alert('open!');
+      sel = APP.doc.open(localStorage.getItem('document'));
       return false;
     },
     save: function (event) {
-      //TODO: save dom to localstorage
-      alert('save!');
+      sel = APP.doc.save();
       return false;
     },
     undo: function (event) {
@@ -57,19 +55,52 @@ APP.input.keydown = function (event) {
       return false;
     },
     selectPrev: function (event) {
-      sel = APP.select.prev(sel);
-      return false;
+      if (sel.elm.classList.contains('editing') === false) {
+        sel = APP.select.prev(sel);
+        return false;
+      }
+      return true;
     },
     selectNext: function (event) {
-      sel = APP.select.next(sel);
-      return false;
+      if (sel.elm.classList.contains('editing') === false) {
+        sel = APP.select.next(sel);
+        return false;
+      }
+      return true;
     },
     selectUp: function (event) {
-      sel = APP.select.up(sel);
-      return false;
+      if (sel.elm.classList.contains('editing') === false) {
+        sel = APP.select.up(sel);
+        return false;
+      }
+      return true;
     },
     selectDown: function (event) {
-      sel = APP.select.down(sel);
+      if (sel.elm.classList.contains('editing') === false) {
+        sel = APP.select.down(sel);
+        return false;
+      }
+      return true;
+    },
+    edit: function (event) {
+      if (sel.elm.classList.contains('row')) {
+        sel = APP.select.element(sel.row.children[0], sel);
+        return false;
+      } else if (sel.elm.classList.contains('editing')) {
+        sel = APP.select.element(sel.elm, sel);
+        return true;
+      } else {
+        sel = APP.select.text(sel);
+        return false;
+      }
+    },
+    escape: function (event) {
+      //if element is contenteditable, deselect text and select the element, if it's an element, select its row
+      if (sel.elm.classList.contains('editing')) {
+        sel = APP.select.element(sel.elm, sel);
+      } else if (sel.elm.parentElement === sel.row) {
+        sel = APP.select.row(sel);
+      }
       return false;
     },
     newRow: function (event) {
@@ -147,6 +178,7 @@ APP.input.keydown = function (event) {
   }
 
   var keymap = {
+    new: (key === 'n' && (mod.meta || mod.ctrl)),
     open: (key === 'o' && (mod.meta || mod.ctrl)),
     save: (key === 's' && (mod.meta || mod.ctrl)),
     undo: (key === 'z' && (mod.meta || mod.ctrl)),
@@ -157,9 +189,11 @@ APP.input.keydown = function (event) {
     selectNext: (key === 'right' && !mod.any),
     selectUp: (key === 'up' && !mod.any),
     selectDown: (key === 'down' && !mod.any),
-    newRow: (key === '\n' && !mod.any),
+    edit: (key === '\n' && !mod.any),
+    escape: (key === 'esc' && !mod.any),
+    newRow: (key === '\n' && (mod.meta || mod.ctrl)),
     deleteRow: (key === '\b' && (mod.meta || mod.ctrl)),
-    moreRowUp: (key === 'up' && mod.ctrl),
+    moveRowUp: (key === 'up' && mod.ctrl),
     moveRowDown: (key === 'down' && mod.ctrl),
     indentRow: (key === '\t' && !mod.any),
     outdentRow: (key === '\t' && mod.shift),

@@ -7,5 +7,5 @@ APP.utils.elementIsProp = function (elm) {
   return elm.nodeName === 'I'; //TODO: don't hardcode things
 }
 APP.utils.elementIsRow = function (elm) {
-  return elm.classList.contains('row') || elm.classList.contains('com');  //TODO: don't hardcode things
+  return elm.classList.contains('row');  //TODO: don't hardcode things
 }

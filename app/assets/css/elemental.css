@@ -166,55 +166,48 @@ textarea:focus {
   font-size: 16px;
   line-height: 24px;
   color: #f8f8f2;
-  background: #272822;
+  background-color: #272822;
 }
 
 .rownums {
   text-align: right;
-  white-space: nowrap;
   padding-left: 1ch;
   padding-right: 1ch;
 }
 
-.rows {
-  padding: 12px 1ch;
+.row {
+  padding: 0 .5ch 0;
+  border-radius: 4px;
 }
 
-.row,
-.com {
-  white-space: pre-wrap;
-}
-
-.row.selected,
-.com.selected {
-  background: #383830;
-}
-
-.row.hilite,
-.com.hilite {
-  background: #383830;
-}
-
-.row i,
-.com i {
+i {
   font-style: normal;
   display: inline;
 }
 
-.row :focus,
-.com :focus {
+.selected {
+  box-shadow: inset 0px 0px 0px 1px rgba(255, 255, 255, 0.8);
+}
+
+i.selected {
+  padding: 2px 0;
+  border-radius: 3px;
+}
+
+:focus {
   outline: none;
 }
 
-.hide-syntax .row i,
-.hide-syntax .com i {
+i.editing {
+  padding: 0;
+}
+
+.hide-syntax i {
   margin: 0 1ch 0 0 !important;
 }
 
-.hide-syntax .row i::before,
-.hide-syntax .row i::after,
-.hide-syntax .com i::before,
-.hide-syntax .com i::after {
+.hide-syntax i::before,
+.hide-syntax i::after {
   display: none !important;
 }
 
