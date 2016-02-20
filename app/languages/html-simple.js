@@ -1,3 +1,4 @@
+//TODO: on app launch, construct a map of type name to type index, so it's easier and faster to refer to types by name in code
 APP.doc.language = {
   id: 'html',
   name: 'HTML Simple',
@@ -8,8 +9,8 @@ APP.doc.language = {
       color: '#f92772',
       startsWith: [],
       contains: '', //TODO: this should probably be a regexp, an array of characters is kinda unwieldy, for now, it's only used to check if the entity can be whitespace only or not
-      endsWith: ['#', '.', ' '],
-      next: ['id', 'class', 'attribute'],
+      endsWith: [' ', '.', '#'],
+      next: ['attribute', 'class', 'id'],
       before: '', //always render this text before an entity of this type
       after: '', //always render this text after an entity of this type
       spacing: [0,0],
@@ -69,7 +70,7 @@ APP.doc.language = {
       startsWith: [' '],
       contains: ' ',
       endsWith: [],
-      next: ['row'],
+      next: ['text'],
       before: '',
       after: '',
       spacing: [0,0],
