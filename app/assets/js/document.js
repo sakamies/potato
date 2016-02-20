@@ -92,7 +92,6 @@ APP.doc.history.add = function (data) {
 
 //Takes selection, returns new selection
 APP.doc.row.new = function (sel) {
-  //TODO: if the current selection has children, add new first child to it, if it doesn't, add a new sibling, so, indent +1 or indent ==
   var indentation = parseInt(sel.row.style.marginLeft);
   var nextIndentation = parseInt($(sel.row).next().css('margin-left'));
   if (nextIndentation && indentation < nextIndentation) {
@@ -101,6 +100,7 @@ APP.doc.row.new = function (sel) {
   var template = APP.config.templates.row.replace('0ch', indentation + 'ch');
   var firstProp = $(sel.row).after(template).next().children().first()[0];
   var newSel = APP.select.element(firstProp, sel);
+  newSel = APP.select.text(newSel);
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return newSel;
 }
@@ -121,6 +121,8 @@ APP.doc.row.moveUp = function (sel) {
   if ($prev.length != 0) {
     $row.after($prev);
   }
+  sel.elm.blur();
+  sel.elm.focus();
 
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel;
@@ -132,6 +134,8 @@ APP.doc.row.moveDown = function (sel) {
   if ($next.length != 0) {
     $row.before($next);
   }
+  sel.elm.blur();
+  sel.elm.focus();
 
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel;
