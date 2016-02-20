@@ -33,16 +33,22 @@
 i {
   font-style: normal;
   display: inline;
+  padding: 2px 0;
+  border-radius: 3px;
+}
+i:empty {
+  padding-left: .5ch;
+  padding-right: .5ch;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-bottom: 2px dotted;
 }
 
 .selected {
-  // box-shadow: inset 0px 0px 0px 1px currentColor;
-  box-shadow: inset 0px 0px 0px 1px white(.8);
-  //background-color: $gray3;
+  box-shadow: inset 0px 0px 0px 1px white(.2);
+  background-color: $gray3;
 }
 i.selected {
-  padding: 2px 0;
-  border-radius: 3px;
 }
 .focus {
 
@@ -50,8 +56,9 @@ i.selected {
 :focus {
   outline: none;
 }
-i.editing {
-  padding: 0;
+.editing {
+  box-shadow: inset 0px 0px 0px 1px white(.0);
+  background-color: darken($dark, 5%);
 }
 
 .hide-syntax {

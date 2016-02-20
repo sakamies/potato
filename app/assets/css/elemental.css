@@ -183,23 +183,30 @@ textarea:focus {
 i {
   font-style: normal;
   display: inline;
+  padding: 2px 0;
+  border-radius: 3px;
+}
+
+i:empty {
+  padding-left: .5ch;
+  padding-right: .5ch;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-bottom: 2px dotted;
 }
 
 .selected {
-  box-shadow: inset 0px 0px 0px 1px rgba(255, 255, 255, 0.8);
-}
-
-i.selected {
-  padding: 2px 0;
-  border-radius: 3px;
+  box-shadow: inset 0px 0px 0px 1px rgba(255, 255, 255, 0.2);
+  background-color: #383830;
 }
 
 :focus {
   outline: none;
 }
 
-i.editing {
-  padding: 0;
+.editing {
+  box-shadow: inset 0px 0px 0px 1px rgba(255, 255, 255, 0);
+  background-color: #1a1a16;
 }
 
 .hide-syntax i {
