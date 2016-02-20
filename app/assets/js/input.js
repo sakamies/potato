@@ -55,38 +55,38 @@ APP.input.keydown = function (event) {
       return false;
     },
     selectPrev: function (event) {
-      if (sel.elm.classList.contains('editing') === false) {
+      if (!APP.utils.elementIsText(sel.elm)) {
         sel = APP.select.prev(sel);
         return false;
       }
       return true;
     },
     selectNext: function (event) {
-      if (sel.elm.classList.contains('editing') === false) {
+      if (!APP.utils.elementIsText(sel.elm)) {
         sel = APP.select.next(sel);
         return false;
       }
       return true;
     },
     selectUp: function (event) {
-      if (sel.elm.classList.contains('editing') === false) {
+      if (!APP.utils.elementIsText(sel.elm)) {
         sel = APP.select.up(sel);
         return false;
       }
       return true;
     },
     selectDown: function (event) {
-      if (sel.elm.classList.contains('editing') === false) {
+      if (!APP.utils.elementIsText(sel.elm)) {
         sel = APP.select.down(sel);
         return false;
       }
       return true;
     },
     edit: function (event) {
-      if (sel.elm.classList.contains('row')) {
+      if (APP.utils.elementIsRow(sel.elm)) {
         sel = APP.select.element(sel.row.children[0], sel);
         return false;
-      } else if (sel.elm.classList.contains('editing')) {
+      } else if (APP.utils.elementIsText(sel.elm)) {
         sel = APP.select.element(sel.elm, sel);
         return true;
       } else {
@@ -95,21 +95,20 @@ APP.input.keydown = function (event) {
       }
     },
     escape: function (event) {
-      //if element is contenteditable, deselect text and select the element, if it's an element, select its row
-      if (sel.elm.classList.contains('editing')) {
+      if (APP.utils.elementIsText(sel.elm)) {
+        //if element is contenteditable, deselect text and select the element
         sel = APP.select.element(sel.elm, sel);
-      } else if (sel.elm.parentElement === sel.row) {
+      } else if (APP.utils.elementIsProp(sel.elm)) {
+        //if it's an element, select its row
         sel = APP.select.row(sel);
       }
       return false;
     },
     newRow: function (event) {
+      //TODO: doesn't work yet
       sel = APP.doc.row.new(sel);
       return false;
     },
-    //TODO: delete row forward delete deleteRowFW with delete
-    //TODO: delete row backward delete deleteRowBW with backspace
-    //TODO: add functions for these into document.js
     deleteRow: function (event) {
       sel = APP.doc.row.del(sel);
       return false;
@@ -130,50 +129,56 @@ APP.input.keydown = function (event) {
       sel = APP.doc.row.outdent(sel);
       return false;
     },
+    expandRow: function (event) {
+      console.log('expand row');
+      return false;
+    },
+    collapseRow: function (event) {
+      console.log('collapse row');
+      return false;
+    },
     toggleCommentRow: function (event) {
       sel = APP.doc.row.toggleComment(sel);
       return false;
     },
     assignPropType: function (event) {
       //-1, because pressing 1 should assing the first thing in the entities array and pressing 0 should assing type 9 accordingly
-      sel = APP.doc.prop.assign(sel, parseInt(key)-1);
-      return false;
-    },
-    deletePropBW: function () {
-      sel = APP.doc.prop.delBW(sel);
-      return false;
-    },
-    deletePropFW: function () {
-      sel = APP.doc.prop.delFW(sel);
-      return false;
-    },
-    eraseProp: function (event) {
-      var textContent = sel.elm.textContent;
-      var textSel = window.getSelection();
-      var textRange = textSel.getRangeAt(0);
-      var allSelected = sel.elm.textContent.length === textRange.startOffset + textRange.endOffset
-
-      //if typed backspace and the prop is in initial state, delete it
-      if (textContent === ' ' && allSelected) {
-        if (key === '\b') {
-          sel = APP.doc.prop.delBW(sel);
-        } else {
-          sel = APP.doc.prop.delFW(sel);
-        }
-        APP.selection = sel;
+      if (APP.utils.elementIsProp(sel.elm)) {
+        sel = APP.doc.prop.setType(sel, parseInt(key)-1);
         return false;
       }
-      //if typed backspace and if the props text is selected, clear the prop to its initial state, or if the prop somehow ends up empty, init it too
-      else if (allSelected || textContent === '') {
-        sel = APP.doc.prop.init(sel);
-        APP.selection = sel;
+      return true;
+    },
+    deleteBW: function () {
+      if (!APP.utils.elementIsText(sel.elm)) {
+        sel = APP.doc.prop.delBW(sel);
+        return false;
+      }
+      return true;
+    },
+    deleteFW: function () {
+      if (!APP.utils.elementIsText(sel.elm)) {
+        sel = APP.doc.prop.delFW(sel);
         return false;
       }
       return true;
     },
     addProp: function (event) {
-      sel = APP.doc.prop.new(sel);
-      return false;
+      if (!APP.utils.elementIsText(sel.elm)) {
+        sel = APP.doc.prop.new(sel);
+        var type = APP.doc.prop.getType(sel.elm.previousSibling);
+        if (type !== false) {
+          var nextType = APP.doc.language.entities[type].next[0];
+          for (var i = 0; i < APP.doc.language.entities.length; i++) {
+            if (APP.doc.language.entities[i].name === nextType) {
+              sel = APP.doc.prop.setType(sel, i);
+              return false;
+            }
+          }
+        }
+        return false;
+      }
+      return true;
     },
   }
 
@@ -197,11 +202,12 @@ APP.input.keydown = function (event) {
     moveRowDown: (key === 'down' && mod.ctrl),
     indentRow: (key === '\t' && !mod.any),
     outdentRow: (key === '\t' && mod.shift),
+    expandRow: (key === '+' && !mod.any),
+    collapseRow: (key === '-' && !mod.any),
     toggleCommentRow: (key === '/' && (mod.metaShift || mod.ctrlShift)),
-    addProp: (key === '\n' && mod.alt),
-    deletePropBW: (key === '\b' && mod.alt),
-    deletePropFW: (key === 'delete' && mod.alt),
-    eraseProp: ((key === '\b' && !mod.any) || key === 'delete' && !mod.any),
+    addProp: (key === ' '),
+    deleteBW: (key === '\b'),
+    deleteFW: (key === 'delete'),
     assignPropType: ((/[0-9]/).test(key) && (mod.meta || mod.ctrl)),
     //selectAll, selectNone, cut/copy/paste(needs some work on multiselection)
   }
@@ -219,33 +225,27 @@ APP.input.keydown = function (event) {
 
 APP.input.input = function (event) {
   var sel = APP.selection;
-  var selElmType = APP.doc.prop.getType(sel);
-  var whitelist = /[a-z0-9!"#$%&'()*+,.\/:;<=>?@\[\] ^_`{|}~-]/;
+  var selElmType = APP.doc.prop.getType(sel.elm);
+  //var whitelist = /[a-z0-9!"#$%&'()*+,.\/:;<=>?@\[\] ^_`{|}~-]/; //TODO: whitelisted or blacklisted characters should be based on language definition
+  //Like blacklisting startsWith & endsWith characters inside a prop, then highlighting them
   var textContent = sel.elm.textContent;
   var textSel = window.getSelection();
   var textRange = textSel.getRangeAt(0);
   var allSelected = sel.elm.textContent.length === textRange.startOffset + textRange.endOffset
 
-  //if prop gets emptied, reinit it
-  if (textContent === '') {
-    sel = APP.doc.prop.init(sel);
-    APP.selection = sel;
-    return;
-  }
-
   //if prop is of default type, try figuring out what type the user wants by looking at the first typed character
-  else if (textContent.length < 3 && selElmType === 0) {
+  if (textContent.length < 3 && selElmType === 0) {
     for (var i = 0; i < APP.doc.language.entities.length; i++) {
       if (APP.doc.language.entities[i].startsWith.indexOf(textContent) !== -1) {
         sel = APP.doc.prop.init(sel);
-        sel = APP.doc.prop.assign(sel, i);
+        sel = APP.doc.prop.setType(sel, i);
         APP.selection = sel;
         return;
       }
     }
   }
-  //if the prop has some content, check the last inserted char to determine if the user wants to start a new prop of some type
-  else if (textContent.length > 1 && textSel.isCollapsed && textRange.endOffset === textContent.length) {
+  //if the prop has some content, check the last char of the prop to determine if the user wants to start a new prop of some type
+  else if (textContent.length > 1) {
     var lastChar = textContent.substring(textContent.length - 1);
     var nextType = APP.doc.language.entities[selElmType].endsWith.indexOf(lastChar);
     if (nextType !== -1) {

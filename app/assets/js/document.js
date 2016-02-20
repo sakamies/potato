@@ -154,28 +154,39 @@ APP.doc.row.toggleComment = function (sel) {
   return sel; //indenting does not modify selection
 }
 
-APP.doc.prop.getType = function (sel) {
-  var typeClass = sel.elm.className.match(/e[0-9]/)[0];
-  var type = parseInt(typeClass.substring(1));
-  return type; //number that matches the index of the entity in the language definition
+APP.doc.prop.getType = function (elm) {
+  if (APP.utils.elementIsProp(elm)) {
+    var typeClass = elm.className.match(/e[0-9]/)[0];
+    var type = parseInt(typeClass.substring(1));
+    return type; //number that matches the index of the entity in the language definition
+  } else {
+    return false;
+  }
 }
 APP.doc.prop.new = function (sel, type) {
+  console.log('prop.new()');
   var template = APP.config.templates.prop;
-  var prop = $(sel.elm).after(template).next()[0];
+  var prop;
+
+  if (APP.utils.elementIsRow(sel.elm)) {
+    sel = APP.select.element(sel.elm.lastChild, sel);
+  }
+  prop = $(sel.elm).after(template).next()[0];
   if (!type) {
     prop.classList.add('e0');
   } else {
     prop.classList.add('e' + type);
   }
-  var newSel = APP.select.element(prop, sel);
-  APP.doc.history.add(APP.doc.elm.innerHTML);
-  return newSel;
-}
-APP.doc.prop.init = function (sel) {
-  sel.elm.innerHTML = ' ';
-  sel = APP.select.element(sel.elm);
+  sel = APP.select.next(sel);
+  sel = APP.select.text(sel);
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel;
+}
+APP.doc.prop.init = function (sel) {
+  sel.elm.innerHTML = '';
+  newSel = APP.select.element(sel.elm);
+  APP.doc.history.add(APP.doc.elm.innerHTML);
+  return newSel;
 }
 APP.doc.prop.del = function (sel) {
   if (sel.row.children.length === 0) {
@@ -184,7 +195,7 @@ APP.doc.prop.del = function (sel) {
     sel.elm.remove();
   }
   APP.doc.history.add(APP.doc.elm.innerHTML);
-  //TODO: returns the deleted selection? that's no good!;
+  //TODO: on selection, if elm & row are null, when pressing down, select first thing in document, when pressing up, select last thing in document
   return {elm: null, row: null};
 }
 APP.doc.prop.delBW = function (sel) {
@@ -220,7 +231,7 @@ APP.doc.prop.delFW = function (sel) {
   return APP.doc.prop.init(sel);
 }
 
-APP.doc.prop.assign = function (sel, type) {
+APP.doc.prop.setType = function (sel, type) {
   if (type === -1) {type = 9};
   if (type < APP.doc.language.entities.length) {
     var className = sel.elm.className;
