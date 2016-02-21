@@ -13,55 +13,83 @@ APP.doc = {
   'lastid': 9,
 };
 
+APP.doc.init = function () {
+  APP.doc.elm.addEventListener('mousedown', APP.pointer.mousedown);
+  APP.doc.elm.addEventListener('mouseup', APP.pointer.mouseup);
+  APP.doc.elm.addEventListener('click', APP.pointer.click);
+  APP.doc.elm.addEventListener('dblclick', APP.pointer.doubleclick);
+  APP.doc.elm.addEventListener('keydown', APP.input.keydown);
+  APP.doc.elm.addEventListener('input', APP.input.input);
+}
 
 //File handling
 APP.doc.new = function (language) {
-  var newDoc = document.querySelector('#empty-document').content.querySelector('.document');
-  return APP.doc.open(newDoc);
+  $.get('/languages/default-html-simple-doc.json', function(data){
+    var sel = APP.doc.open(data);
+    APP.doc.init();
+    APP.selection = sel;
+  });
 }
 APP.doc.open = function (data) {
-  var doc = document.querySelector('.document');
-  doc.innerHTML = $(data).html();
-  APP.doc.elm = doc;
+  if (!data) {
+    data = localStorage.getItem('tempsave');
+  }
+  var rows = APP.language.parse(data);
+  var newDoc = APP.config.templates.doc.replace('$rows', rows);
+
+  doc = $('.document').replaceWith(newDoc);
+  APP.doc.elm = document.querySelector('.document');
+  APP.doc.language = APP.language.id;
 
   //TODO: determine language type
-  //TODO: parse language styles from language definition
-
   //TODO: reading a file in should generate ids for rows
 
-  //TODO: this needs its own module for parsing and stuff
-  var cssArray = APP.doc.language.entities.map(function(ent, i) {
-    return `
-      .e${i} {
-        color: ${ent.color};
-        margin-left: ${ent.spacing[0]}ch;
-        margin-right: ${ent.spacing[1]}ch;
-      }
-      .e${i}::before {
-        content: '${ent.before}';
-      }
-      .e${i}::after {
-        content: '${ent.after}';
-      }
-      .e${i}::selection {
-        color: white;
-        background: ${ent.color};
-      }
-    `
-  });
-  var css = '<style>'+cssArray.join('')+'</style>';
-  $(APP.doc.elm).prepend(css);
+
+  var style = APP.doc.getStyle(APP.language.tokens);
+  APP.doc.elm.querySelector('style').innerHTML = style;
+
+
   //TODO: Update helper ui/toolbar to match settings
 
   var newSel = APP.select.element(APP.doc.elm.querySelector('.rows > :first-child'));
   APP.doc.history.add(APP.doc.elm.innerHTML);
+  APP.doc.init();
   return newSel;
 }
-APP.doc.save = function (sel) {
-  localStorage.setItem('document', APP.doc.elm.outerHTML);
-  return sel;
+APP.doc.save = function () {
+  var saveText = APP.language.stringify(APP.doc.elm);
+  localStorage.setItem('tempsave', saveText);
 }
 
+APP.doc.getStyle = function (tokens) {
+  return tokens.map(function(ent, i) {
+      var zeroWidthSpace = '\\200B ';
+      //TODO: zero width space does not seem to work for word breaking :(
+      if (ent.before != '') {
+        ent.before = `content: '${ent.before}' !important;`
+      }
+      if (ent.after != '') {
+        ent.after = `content: '${ent.after}' !important;`;
+      }
+      return `
+        .e${i} {
+          color: ${ent.color};
+          margin-left: ${ent.spacing[0]}ch;
+          margin-right: ${ent.spacing[1]}ch;
+        }
+        .e${i}::before {
+          ${ent.before}
+        }
+        .e${i}::after {
+          ${ent.after}
+        }
+        /*.e${i}::selection {
+          color: white;
+          background: ${ent.color};
+        }*/
+      `
+    }).join('');
+}
 
 //History
 APP.doc.history.undo = function (sel) {
@@ -92,13 +120,15 @@ APP.doc.history.add = function (data) {
 
 //Takes selection, returns new selection
 APP.doc.row.new = function (sel) {
-  var indentation = parseInt(sel.row.style.marginLeft);
-  var nextIndentation = parseInt($(sel.row).next().css('margin-left'));
+  var indentation = APP.doc.row.getIndentation(sel.row);
+  var nextIndentation = APP.doc.row.getIndentation($(sel.row).next()[0]);
   if (nextIndentation && indentation < nextIndentation) {
     indentation = nextIndentation;
   }
-  var template = APP.config.templates.row.replace('0ch', indentation + 'ch');
-  var firstProp = $(sel.row).after(template).next().children().first()[0];
+  var propTemplate = APP.config.templates.prop.replace('$text', '');
+  var rowTemplate = APP.config.templates.row.replace('$prop', propTemplate);
+  rowTemplate = rowTemplate.replace('0ch', indentation + 'ch');
+  var firstProp = $(sel.row).after(rowTemplate).next().children().first()[0];
   var newSel = APP.select.element(firstProp, sel);
   newSel = APP.select.text(newSel);
   APP.doc.history.add(APP.doc.elm.innerHTML);
@@ -141,18 +171,28 @@ APP.doc.row.moveDown = function (sel) {
   return sel;
 }
 
+APP.doc.row.getIndentation = function (row) {
+  return parseInt(row.style.paddingLeft);
+}
+APP.doc.row.setIndentation = function (row, indentation) {
+  row.style.paddingLeft = indentation + 'ch';
+}
 APP.doc.row.indent = function (sel) {
-  sel.row.style.marginLeft = (parseInt(sel.row.style.marginLeft) + 2) + 'ch';
+  var indentation = APP.doc.row.getIndentation(sel.row);
+  APP.doc.row.setIndentation(sel.row, indentation + 2);
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel; //indentationing does not modify selection
 }
 APP.doc.row.outdent = function (sel) {
-  sel.row.style.marginLeft = (parseInt(sel.row.style.marginLeft) - 2) + 'ch';
-  APP.doc.history.add(APP.doc.elm.innerHTML);
+  var indentation = APP.doc.row.getIndentation(sel.row);
+  if (indentation > 0) {
+    APP.doc.row.setIndentation(sel.row, indentation - 2);
+    APP.doc.history.add(APP.doc.elm.innerHTML);
+  }
   return sel; //indenting does not modify selection
 }
 APP.doc.row.toggleComment = function (sel) {
-  sel.row.classList.toggle('row');
+  sel.row.classList.toggle('comment');
 
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel; //indenting does not modify selection
@@ -168,8 +208,7 @@ APP.doc.prop.getType = function (elm) {
   }
 }
 APP.doc.prop.new = function (sel, type) {
-  console.log('prop.new()');
-  var template = APP.config.templates.prop;
+  var template = APP.config.templates.prop.replace('$text', '');
   var prop;
 
   if (APP.utils.elementIsRow(sel.elm)) {
@@ -237,7 +276,7 @@ APP.doc.prop.delFW = function (sel) {
 
 APP.doc.prop.setType = function (sel, type) {
   if (type === -1) {type = 9};
-  if (type < APP.doc.language.entities.length) {
+  if (type < APP.language.tokens.length) {
     var className = sel.elm.className;
     className = className.replace(/e[0-9]/, '');
     sel.elm.className = className;

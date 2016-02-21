@@ -1,13 +1,3 @@
-// Doc uses single letter elements, so if this gets extendable, i can write even more cryptic code, ugh.
-// a
-// b
-// i
-// p
-// q
-// s
-// u
-// because i'm lazy
-
 // $em: 16px;
 // $vx: 24px;
 // $hx: 1ch;
@@ -32,34 +22,59 @@
 }
 i {
   font-style: normal;
-  display: inline;
-  padding: 2px 0;
+  overflow-wrap: break-word;
+  display: inline-block;
+  vertical-align: middle;
   border-radius: 3px;
 }
 i:empty {
   padding-left: .5ch;
   padding-right: .5ch;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-  border-bottom: 2px dotted;
+  //border-bottom-right-radius: 0;
+  //border-bottom-left-radius: 0;
+  min-height: $vx;
+  margin-top: -2px;
+  margin-bottom: -2px;
+  box-shadow: inset 0px 0px 0px 1px currentColor;
 }
 
 .selected {
-  box-shadow: inset 0px 0px 0px 1px white(.2);
   background-color: $gray3;
 }
 i.selected {
-}
-.focus {
-
+  background-color: $gray2;
 }
 :focus {
+  //box-shadow: inset 0px 0px 0px 1px white(.3);
+  //box-shadow: 0px 0px 0px 1px $gray3;
   outline: none;
 }
-.editing {
-  box-shadow: inset 0px 0px 0px 1px white(.0);
-  background-color: darken($dark, 5%);
+i.editing {
+  color: $dark;
+  background-color: white;
+  // background-color: $dark;
+  // margin-bottom: -2px;
+  // border-bottom: 2px solid;
+  // border-radius: 0;
 }
+//
+//Comment
+//
+.comment {
+  color: $gray1;
+  font-style: italic;
+
+  //Increase specificity with double class name
+  &.comment > * {
+    font-style: inherit;
+    color: inherit;
+  }
+  &.comment > *::selection {
+    color: white;
+    background-color: $light;
+  }
+}
+
 
 .hide-syntax {
   i {
@@ -70,20 +85,24 @@ i.selected {
     display: none !important;
   }
 }
-//
-//Comment
-//
-.com {
-  color: $gray1;
-  font-style: italic;
 
-  //Increase specificity with double class name
-  &.com > * {
-    font-style: inherit;
-    color: inherit;
+.word-wrap {
+  .document {
+    overflow-x: hidden;
+    white-space: normal;
   }
-  &.com > *::selection {
-    color: white;
-    background-color: $light;
+  i {
+    max-width: 100%;
+    overflow: hidden;
+    overflow-wrap: break-word;
+  }
+}
+.no-word-wrap {
+  .document {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  i {
+    overflow-wrap: normal;
   }
 }

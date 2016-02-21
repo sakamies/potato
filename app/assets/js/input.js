@@ -30,15 +30,16 @@ APP.input.keydown = function (event) {
 
   var actions = {
     new: function (event) {
-      sel = APP.doc.new();
+      APP.doc.new();
       return false;
     },
     open: function (event) {
-      sel = APP.doc.open(localStorage.getItem('document'));
+      sel = APP.doc.open();
       return false;
     },
     save: function (event) {
-      sel = APP.doc.save();
+      //TODO: save borks selection somehow?
+      APP.doc.save();
       return false;
     },
     undo: function (event) {
@@ -58,6 +59,8 @@ APP.input.keydown = function (event) {
       if (!APP.utils.elementIsText(sel.elm)) {
         sel = APP.select.prev(sel);
         return false;
+      } else if (APP.utils.elementIsRow(sel.elm)) {
+        //TODO: select parent, eg. select neares row upward that has indentation that's smaller than this
       }
       return true;
     },
@@ -130,20 +133,20 @@ APP.input.keydown = function (event) {
       sel = APP.doc.row.outdent(sel);
       return false;
     },
-    expandRow: function (event) {
-      console.log('expand row');
+    unfoldRow: function (event) {
+      console.log('unfold/expand row');
       return false;
     },
-    collapseRow: function (event) {
-      console.log('collapse row');
+    foldRow: function (event) {
+      console.log('fold/collapse row');
       return false;
     },
     toggleCommentRow: function (event) {
       sel = APP.doc.row.toggleComment(sel);
       return false;
     },
-    assignPropType: function (event) {
-      //-1, because pressing 1 should assing the first thing in the entities array and pressing 0 should assing type 9 accordingly
+    setPropType: function (event) {
+      //-1, because pressing 1 should assing the first thing in the tokens array and pressing 0 should assing type 9 accordingly
       if (APP.utils.elementIsProp(sel.elm)) {
         sel = APP.doc.prop.setType(sel, parseInt(key)-1);
         return false;
@@ -169,9 +172,9 @@ APP.input.keydown = function (event) {
         sel = APP.doc.prop.new(sel);
         var type = APP.doc.prop.getType(sel.elm.previousSibling);
         if (type !== false) {
-          var nextType = APP.doc.language.entities[type].next[0];
-          for (var i = 0; i < APP.doc.language.entities.length; i++) {
-            if (APP.doc.language.entities[i].name === nextType) {
+          var nextType = APP.language.tokens[type].next[0];
+          for (var i = 0; i < APP.language.tokens.length; i++) {
+            if (APP.language.tokens[i].name === nextType) {
               sel = APP.doc.prop.setType(sel, i);
               return false;
             }
@@ -203,14 +206,16 @@ APP.input.keydown = function (event) {
     moveRowDown: (key === 'down' && mod.ctrl),
     indentRow: (key === '\t' && !mod.any),
     outdentRow: (key === '\t' && mod.shift),
-    expandRow: (key === '+' && !mod.any),
-    collapseRow: (key === '-' && !mod.any),
+    unfoldRow: (key === '+' && !mod.any),
+    foldRow: (key === '-' && !mod.any),
     toggleCommentRow: (key === '/' && (mod.metaShift || mod.ctrlShift)),
     addProp: (key === ' '),
     deleteBW: (key === '\b'),
     deleteFW: (key === 'delete'),
-    assignPropType: ((/[0-9]/).test(key) && (mod.meta || mod.ctrl)),
-    //selectAll, selectNone, cut/copy/paste(needs some work on multiselection)
+    setPropType: ((/[0-9]/).test(key) && (mod.meta || mod.ctrl)),
+    //TODO: selectAll, selectNone
+    //TODO: cut/copy/paste
+    //TODO: strip styles & tags from pasted text
   }
 
   for (action in keymap) {
@@ -236,8 +241,8 @@ APP.input.input = function (event) {
 
   //if prop is of default type, try figuring out what type the user wants by looking at the first typed character
   if (textContent.length < 3 && selElmType === 0) {
-    for (var i = 0; i < APP.doc.language.entities.length; i++) {
-      if (APP.doc.language.entities[i].startsWith.indexOf(textContent) !== -1) {
+    for (var i = 0; i < APP.language.tokens.length; i++) {
+      if (APP.language.tokens[i].startsWith.indexOf(textContent) !== -1) {
         sel = APP.doc.prop.init(sel);
         sel = APP.doc.prop.setType(sel, i);
         APP.selection = sel;
@@ -248,11 +253,13 @@ APP.input.input = function (event) {
   //if the prop has some content, check the last char of the prop to determine if the user wants to start a new prop of some type
   else if (textContent.length > 1) {
     var lastChar = textContent.substring(textContent.length - 1);
-    var nextType = APP.doc.language.entities[selElmType].endsWith.indexOf(lastChar);
+    console.log(lastChar.charCodeAt(0), APP.language.tokens[selElmType].endsWith[1].charCodeAt(0), lastChar == APP.language.tokens[selElmType].endsWith[1]);
+    var nextType = APP.language.tokens[selElmType].endsWith.indexOf(lastChar);
+
     if (nextType !== -1) {
-      nextType = APP.doc.language.entities[selElmType].next[nextType];
-      for (var i = 0; i < APP.doc.language.entities.length; i++) {
-        if (APP.doc.language.entities[i].name === nextType) {
+      nextType = APP.language.tokens[selElmType].next[nextType];
+      for (var i = 0; i < APP.language.tokens.length; i++) {
+        if (APP.language.tokens[i].name === nextType) {
           sel.elm.innerHTML = textContent.substr(0, textContent.length - 1);
           sel = APP.doc.prop.new(sel, i);
           APP.selection = sel;

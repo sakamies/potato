@@ -1,9 +1,9 @@
 //TODO: on app launch, construct a map of type name to type index, so it's easier and faster to refer to types by name in code
-APP.doc.language = {
-  id: 'html',
+APP.language = {
+  id: 'html-simple',
   name: 'HTML Simple',
   url: 'http://potato?',
-  entities: [
+  tokens: [
     { //the first entity is the default type
       name: 'name',
       color: '#f92772',
@@ -33,8 +33,8 @@ APP.doc.language = {
       color: '#f6aa10',
       startsWith: ['.'],
       contains: '',
-      endsWith: ['.', ' '],
-      next: ['class', 'attribute'],
+      endsWith: ['.', ' ', '#'],
+      next: ['class', 'attribute', 'id'],
       before: '.',
       after: '',
       spacing: [0,0],
@@ -77,4 +77,63 @@ APP.doc.language = {
       removalDeletes: [''],
     },
   ],
+  parse: function (text) {
+    //takes in text as this definitions text format, returns rows
+    var doc = JSON.parse(text);
+    var rows = doc.rows;
+    var row;
+    var elm;
+
+    var outRows = '';
+    var outRow;
+    var outProp;
+
+    for (var i = 0; i < rows.length; i++) {
+      row = rows[i];
+      outRow = '';
+
+      for (var j = 0; j < row.elms.length; j++) {
+        elm = row.elms[j];
+        outProp = '';
+        outProp = APP.config.templates.prop.replace('e0', 'e'+elm.type);
+        outProp = outProp.replace('$text', elm.text);
+        outRow += outProp;
+      }
+
+      outRow = APP.config.templates.row.replace('$prop', outRow);
+      outRow = outRow.replace('0ch', row.indentation + 'ch');
+      outRows += outRow;
+    }
+
+    return outRows;
+  },
+  stringify: function (doc) {
+    //Takes in the dom from the editor, outputs it as the text format that the open function can parse
+    var rows = doc.querySelectorAll('.row');
+    var outRows = [];
+    var out = {};
+
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      var outRow = {indentation: 0, commented: false, elms: []};
+      if (row.classList.contains('com')) {
+        outRow.commented = true;
+      }
+      rowElms = rows[i].querySelectorAll('i');
+      outRow.indentation = APP.doc.row.getIndentation(row);
+      for (var j = 0; j < rowElms.length; j++) {
+        var elm = rowElms[j];
+        var outElm = {
+          type: APP.doc.prop.getType(elm),
+          text: elm.textContent,
+        }
+        outRow.elms.push(outElm);
+      }
+      outRows.push(outRow);
+    }
+
+    var out = {rows: outRows};
+    console.log(JSON.stringify(out));
+    return JSON.stringify(out);
+  }
 };

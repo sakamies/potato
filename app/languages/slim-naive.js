@@ -1,7 +1,7 @@
-APP.doc.language = {
+APP.language = {
   name: 'Slim Naïve',
   url: 'http://slim-lang.com',
-  entities: [
+  tokens: [
     {
       name: 'name',
       className: 'e1',

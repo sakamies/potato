@@ -1,6 +1,11 @@
 APP.config = {
 };
 
+APP.config.view = {
+  'word-wrap': true,
+  'indentation': 2, //how many spaces for indentation
+}
+
 //TODO: make color scheming possibble by giving a color map in the format: {'color': ['things','that','this','color','applies','to']} like {'#f92772': ['html.name', 'css.selector']}
 APP.config.colors = [
   '#f8f8f2', //light
@@ -17,17 +22,10 @@ APP.config.colors = [
   '#66d9ef', //blue
 ]
 APP.config.templates = {
-  'prop': '<i class=""></i>',
-  'row': '<div id="" class="row" style="margin-left: 0ch"><i class="e0"></i></div>'
+  'prop': '<i class="e0">$text</i>',
+  'row': '<div id="" class="row" style="padding-left: 0ch">$prop</div>',
+  'doc': '<div class="document"><style></style><div class="rownums"></div><div class="rows">$rows</div></div>',
 }
-APP.config.indentation = '  '; //TODO: use this in the indent handler
-
-//TODO: load language from somewhere separately and have some config UI
-
-APP.config.keymap = {
-
-};
-
 
 // // Pointer, for tracking mouse button down state etc
 
