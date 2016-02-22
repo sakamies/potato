@@ -42,14 +42,14 @@ APP.doc.open = function (data) {
   APP.doc.language = APP.language.id;
 
   //TODO: determine language type
-  //TODO: reading a file in should generate ids for rows
+  //TODO: reading a file in should generate ids for rows after the input file has been parsed
 
 
   var style = APP.doc.getStyle(APP.language.tokens);
   APP.doc.elm.querySelector('style').innerHTML = style;
 
 
-  //TODO: Update helper ui/toolbar to match settings
+  //TODO: Update helper ui/toolbar to match settings, something like css vocabulary would be cool
 
   var newSel = APP.select.element(APP.doc.elm.querySelector('.rows > :first-child'));
   APP.doc.history.add(APP.doc.elm.innerHTML);
@@ -63,8 +63,6 @@ APP.doc.save = function () {
 
 APP.doc.getStyle = function (tokens) {
   return tokens.map(function(ent, i) {
-      var zeroWidthSpace = '\\200B ';
-      //TODO: zero width space does not seem to work for word breaking :(
       if (ent.before != '') {
         ent.before = `content: '${ent.before}' !important;`
       }

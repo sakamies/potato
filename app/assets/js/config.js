@@ -6,7 +6,7 @@ APP.config.view = {
   'indentation': 2, //how many spaces for indentation
 }
 
-//TODO: make color scheming possibble by giving a color map in the format: {'color': ['things','that','this','color','applies','to']} like {'#f92772': ['html.name', 'css.selector']}
+//TODO: color theming? something like .tmtheme format?
 APP.config.colors = [
   '#f8f8f2', //light
   '#828380', //lightgray
@@ -26,11 +26,3 @@ APP.config.templates = {
   'row': '<div id="" class="row" style="padding-left: 0ch">$prop</div>',
   'doc': '<div class="document"><style></style><div class="rownums"></div><div class="rows">$rows</div></div>',
 }
-
-// // Pointer, for tracking mouse button down state etc
-
-// POINTER = {};
-// POINTER.DOWN = false;
-// POINTER.UPDATE = function (event) {
-//   //TODO: update POINTER.DOWN based on passed event
-// }

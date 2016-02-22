@@ -2,6 +2,11 @@
 
 APP.pointer = {};
 
+// APP.pointer.dragging = false;
+// APP.pointer.getState = function (event) {
+  //TODO: pointer dragging logic, should use native dragging if possibble
+// }
+
 APP.pointer.mousedown = function (event) {
   var sel = APP.selection;
   var elm = event.target;

@@ -11,7 +11,6 @@ APP.language = {
       next: ['id', 'class', 'text', 'code'],
       before: '', //always render this text before an entity of this type
       after: '', //always render this text after an entity of this type
-      removalDeletes: 'row', //if this entity is deleted, what goes with it
     },
     {
       name: 'attribute',
@@ -22,7 +21,6 @@ APP.language = {
       next: ['value'],
       before: ' ',
       after: '=',
-      removalDeletes: 'next values', //TODO: how to configure deleting next something untils next something?
     },
     {
       name: 'value',
@@ -33,7 +31,6 @@ APP.language = {
       next: [],
       before: '',
       after: '',
-      removalDeletes: '',
     },
     {
       name: 'id',
@@ -44,7 +41,6 @@ APP.language = {
       next: ['class', 'attribute'],
       before: '#',
       after: '',
-      removalDeletes: '',
     },
     {
       name: 'class',
@@ -55,7 +51,6 @@ APP.language = {
       next: ['class', 'attribute'],
       before: '.',
       after: '',
-      removalDeletes: '',
     },
     {
       name: '',
@@ -66,7 +61,6 @@ APP.language = {
       next: [],
       before: '',
       after: '',
-      removalDeletes: '',
     },
     {
       name: '',
@@ -77,7 +71,6 @@ APP.language = {
       next: [],
       before: '',
       after: '',
-      removalDeletes: '',
     },
     {
       name: '',
@@ -88,7 +81,6 @@ APP.language = {
       next: [],
       before: '',
       after: '',
-      removalDeletes: '',
     },
     {
       name: 'code',
@@ -99,7 +91,6 @@ APP.language = {
       next: ['row'],
       before: '',
       after: '',
-      removalDeletes: '',
     },
     {
       name: 'text',
@@ -110,7 +101,6 @@ APP.language = {
       next: ['row'],
       before: '',
       after: '',
-      removalDeletes: '',
     },
   ]
 };

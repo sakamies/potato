@@ -16,8 +16,6 @@ APP.input.getModifiers = function (event) {
   }
 }
 
-//TODO: make a keymap that's something like {key: action, key: action, etc...}
-//TODO: platform especific keymaps? because of meta/cmd/ctrl differences
 APP.input.keypress = function (event) {
   event.preventDefault();
 }
@@ -216,6 +214,7 @@ APP.input.keydown = function (event) {
     //TODO: selectAll, selectNone
     //TODO: cut/copy/paste
     //TODO: strip styles & tags from pasted text
+    //TODO: alt+arrows should move along the thee in the doc (parent, child, silbings in the indented structure of the doc), kinda like alt+arrows moves accross word boundaries in regular text editing
   }
 
   for (action in keymap) {
@@ -253,6 +252,7 @@ APP.input.input = function (event) {
   //if the prop has some content, check the last char of the prop to determine if the user wants to start a new prop of some type
   else if (textContent.length > 1) {
     var lastChar = textContent.substring(textContent.length - 1);
+    //TODO: normalize non breaking space vs space when comparing lastChar with endsWith
     console.log(lastChar.charCodeAt(0), APP.language.tokens[selElmType].endsWith[1].charCodeAt(0), lastChar == APP.language.tokens[selElmType].endsWith[1]);
     var nextType = APP.language.tokens[selElmType].endsWith.indexOf(lastChar);
 

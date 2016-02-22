@@ -13,8 +13,6 @@ APP.selection = {
 
 APP.select = {};
 
-//takes new element to select and current selection, returns new selection
-//TODO: if you give in the old selection, the selection collapses to sel, if you don't give in sel, the selection is additive
 APP.select.text = function (sel) {
 
   //collapse selection
@@ -28,11 +26,9 @@ APP.select.text = function (sel) {
   return sel;
 }
 APP.select.element = function (newElm, sel) {
+  //takes new element to select and current selection, returns new selection
+  //TODO: if you give in the old selection, the selection collapses to sel, if you don't give in sel, the selection is additive
   var row;
-  //TODO: check if the selection is the same as the old one, if yes, return the same object
-  // if (sel && elm === sel.elm) {
-  //   return sel;
-  // }
   //TODO: additive selection and all, do this old selection check with $('.selected') & $('.focus')
   if (sel && sel.elm !== null) {
     sel.elm.classList.remove('selected');

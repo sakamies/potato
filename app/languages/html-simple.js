@@ -14,7 +14,6 @@ APP.language = {
       before: '', //always render this text before an entity of this type
       after: '', //always render this text after an entity of this type
       spacing: [0,0],
-      removalDeletes: ['row'], //if this entity is deleted, what goes with it
     },
     {
       name: 'id',
@@ -26,7 +25,6 @@ APP.language = {
       before: '#',
       after: '',
       spacing: [0,0],
-      removalDeletes: [''],
     },
     {
       name: 'class',
@@ -38,7 +36,6 @@ APP.language = {
       before: '.',
       after: '',
       spacing: [0,0],
-      removalDeletes: [''],
     },
     {
       name: 'attribute',
@@ -50,7 +47,6 @@ APP.language = {
       before: '',
       after: ':',
       spacing: [1,0],
-      removalDeletes: ['+ .value'], //TODO: how to configure deleting next something untils next something?
     },
     {
       name: 'value',
@@ -62,7 +58,6 @@ APP.language = {
       before: '',
       after: '',
       spacing: [0,0],
-      removalDeletes: [''],
     },
     {
       name: 'text',
@@ -74,7 +69,6 @@ APP.language = {
       before: '',
       after: '',
       spacing: [0,0],
-      removalDeletes: [''],
     },
   ],
   parse: function (text) {
@@ -133,7 +127,6 @@ APP.language = {
     }
 
     var out = {rows: outRows};
-    console.log(JSON.stringify(out));
     return JSON.stringify(out);
   }
 };
