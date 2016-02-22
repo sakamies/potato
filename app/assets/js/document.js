@@ -64,10 +64,10 @@ APP.doc.save = function () {
 APP.doc.getStyle = function (tokens) {
   return tokens.map(function(ent, i) {
       if (ent.before != '') {
-        ent.before = `content: '${ent.before}' !important;`
+        var before = `content: '${ent.before}';`
       }
       if (ent.after != '') {
-        ent.after = `content: '${ent.after}' !important;`;
+        var after = `content: '${ent.after}';`;
       }
       return `
         .e${i} {
@@ -76,10 +76,10 @@ APP.doc.getStyle = function (tokens) {
           margin-right: ${ent.spacing[1]}ch;
         }
         .e${i}::before {
-          ${ent.before}
+          ${before}
         }
         .e${i}::after {
-          ${ent.after}
+          ${after}
         }
         /*.e${i}::selection {
           color: white;
