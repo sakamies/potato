@@ -2,6 +2,8 @@
 // $vx: 24px;
 // $hx: 1ch;
 
+//TODO: make indentation guide according to indentation amount from config, for now just hardcode 2ch. Make 1px vertical gradient that's has 2ch space between lines. Add a background to each row, with origin & clip starting from content-box, so the background covers the indentation guide gradient from the indentation depth to the right
+
 .document {
   font-family: $font-mono;
   font-size: $em;
@@ -28,6 +30,9 @@ i {
   border-radius: 3px;
 }
 i:empty {
+  //TODO: empty check should be done in js (probably in select.element()), add a class to a node if it's contents are something other than 'contains' in language definition
+  //TODO: and after that, there should be a highlighter that highlights illegal characters according to the whitelist in a prop, then a style here, like .illegal that's a red colored block
+  //TODO: after that, maybe make a feature in the language definition, where you can define legal rows, kind of like a regexp of elements. So you could say that each row must begin with this or that, then can be this or that and so on
   padding-left: .5ch;
   padding-right: .5ch;
   //border-bottom-right-radius: 0;
