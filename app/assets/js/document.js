@@ -170,7 +170,11 @@ APP.doc.row.moveDown = function (sel) {
 }
 
 APP.doc.row.getIndentation = function (row) {
-  return parseInt(row.style.paddingLeft);
+  if (row) {
+    return parseInt(row.style.paddingLeft);
+  } else {
+    return null;
+  }
 }
 APP.doc.row.setIndentation = function (row, indentation) {
   row.style.paddingLeft = indentation + 'ch';
