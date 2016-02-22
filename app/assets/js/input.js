@@ -206,7 +206,7 @@ APP.input.keydown = function (event) {
     outdentRow: (key === '\t' && mod.shift),
     unfoldRow: (key === '+' && !mod.any),
     foldRow: (key === '-' && !mod.any),
-    toggleCommentRow: (key === '/' && (mod.metaShift || mod.ctrlShift)),
+    toggleCommentRow: (key === '/' && (event.metaKey || event.ctrlKey)),
     addProp: (key === ' '),
     deleteBW: (key === '\b'),
     deleteFW: (key === 'delete'),
