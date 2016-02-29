@@ -24,22 +24,21 @@ APP.doc.init = function () {
 
 //File handling
 APP.doc.new = function (language) {
-  $.get('/languages/default-html-simple-doc.json', function(data){
-    var sel = APP.doc.open(data);
+  $.get('/languages/html-simple/html-simple.html', function(response){
+    var sel = APP.doc.open(response);
     APP.doc.init();
     APP.selection = sel;
   });
 }
 APP.doc.open = function (data) {
   if (!data) {
-    data = localStorage.getItem('tempsave');
+    data = localStorage.getItem('potato-doc');
   }
-  var rows = APP.language.parse(data);
-  var newDoc = APP.config.templates.doc.replace('$rows', rows);
-
-  doc = $('.document').replaceWith(newDoc);
+  var doc = APP.language.parse(data);
+  var dom = APP.doc.createDom(doc);
+  $('.document').replaceWith(dom);
   APP.doc.elm = document.querySelector('.document');
-  APP.doc.language = APP.language.id;
+  APP.doc.language = doc.language;
 
   //TODO: determine language type
   //TODO: reading a file in should generate ids for rows after the input file has been parsed
@@ -58,9 +57,56 @@ APP.doc.open = function (data) {
 }
 APP.doc.save = function () {
   var saveText = APP.language.stringify(APP.doc.elm);
-  localStorage.setItem('tempsave', saveText);
+  localStorage.setItem('potato-doc', saveText);
 }
+APP.doc.createDom = function (doc) {
+  //takes in doc as object, returns rows as dom
+  //TODO: actually returns html, not dom, make it return dom?
+  /*
+    //doc object spec:
+    {
+      language: html-simple
+      rows: [
+        {
+          indentation: integer
+          commented: boolean
+          props: [
+            type: integer
+            text: string
+          ]
+        }
+      ]
+    }
+  */
+  var rows = doc.rows;
+  var row;
+  var elm;
 
+  var outDoc = APP.config.templates.doc;
+  var outRows = '';
+  var outRow;
+  var outProp;
+
+  console.log(doc);
+  for (var i = 0; i < rows.length; i++) {
+    row = rows[i];
+    outRow = '';
+
+    for (var j = 0; j < row.props.length; j++) {
+      prop = row.props[j];
+      outProp = '';
+      outProp = APP.config.templates.prop.replace('e0', 'e'+prop.type);
+      outProp = outProp.replace('$text', prop.text);
+      outRow += outProp;
+    }
+
+    outRow = APP.config.templates.row.replace('$prop', outRow);
+    outRow = outRow.replace('0ch', row.indentation + 'ch');
+    outRows += outRow;
+  }
+
+  return outDoc.replace('$rows', outRows);
+}
 APP.doc.getStyle = function (tokens) {
   return tokens.map(function(ent, i) {
       if (ent.before != '') {

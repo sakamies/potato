@@ -7,6 +7,7 @@
 */
 
 function process_node (domnode, depth) {
+  //converts a dom tree into a flat list of rows that show the tree structure by indentation
 
   if (!depth) { depth = 0; }
 
