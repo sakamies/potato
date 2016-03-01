@@ -1,21 +1,12 @@
 .type-name {
   color: #f92772;
 }
-.type-name::before {
-  content: '';
-}
-.type-name::after {
-  content: '';
-}
 
 .type-id {
   color: #be84ff;
 }
 .type-id::before {
   content: '#';
-}
-.type-id::after {
-  content: '';
 }
 
 .type-class {
@@ -24,39 +15,21 @@
 .type-class::before {
   content: '.';
 }
-.type-class::after {
-  content: '';
-}
 
 .type-attribute {
   color: #a6e22d;
   margin-left: 1ch;
 }
-.type-attribute::before {
-  content: '.';
-}
 .type-attribute::after {
-  content: '';
+  content: ':';
 }
 
 .type-value {
   color: #e6db74;
 }
-.type-value::before {
-  content: '.';
-}
-.type-value::after {
-  content: '';
-}
 
 .type-text {
   color: white;
-}
-.type-text::before {
-  content: '.';
-}
-.type-text::after {
-  content: '';
 }
 
 
