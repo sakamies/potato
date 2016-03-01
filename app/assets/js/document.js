@@ -65,7 +65,7 @@ APP.doc.createDom = function (doc) {
   /*
     //doc object spec:
     {
-      language: html-simple
+      language: string
       rows: [
         {
           indentation: integer
@@ -87,7 +87,6 @@ APP.doc.createDom = function (doc) {
   var outRow;
   var outProp;
 
-  console.log(doc);
   for (var i = 0; i < rows.length; i++) {
     row = rows[i];
     outRow = '';
@@ -105,7 +104,9 @@ APP.doc.createDom = function (doc) {
     outRows += outRow;
   }
 
-  return outDoc.replace('$rows', outRows);
+  outDoc = outDoc.replace('$class', `document ${doc.language}`);
+  outDoc = outDoc.replace('$rows', outRows);
+  return outDoc;
 }
 APP.doc.getStyle = function (tokens) {
   return tokens.map(function(ent, i) {

@@ -1,0 +1,62 @@
+.html-simple .name {
+  color: #f92772;
+}
+.html-simple .name::before {
+  content: '';
+}
+.html-simple .name::after {
+  content: '';
+}
+
+.html-simple .id {
+  color: #be84ff;
+}
+.html-simple .id::before {
+  content: '#';
+}
+.html-simple .id::after {
+  content: '';
+}
+
+.html-simple .class {
+  color: #f6aa10;
+}
+.html-simple .class::before {
+  content: '.';
+}
+.html-simple .class::after {
+  content: '';
+}
+
+.html-simple .attribute {
+  color: #a6e22d;
+  margin-left: 1ch;
+}
+.html-simple .attribute::before {
+  content: '.';
+}
+.html-simple .attribute::after {
+  content: '';
+}
+
+.html-simple .value {
+  color: #e6db74;
+}
+.html-simple .value::before {
+  content: '.';
+}
+.html-simple .value::after {
+  content: '';
+}
+
+.html-simple .text {
+  color: white;
+}
+.html-simple .text::before {
+  content: '.';
+}
+.html-simple .text::after {
+  content: '';
+}
+
+

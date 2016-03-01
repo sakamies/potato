@@ -24,5 +24,5 @@ APP.config.colors = [
 APP.config.templates = {
   'prop': '<i class="e0">$text</i>',
   'row': '<div id="" class="row" style="padding-left: 0ch">$prop</div>',
-  'doc': '<div class="document"><style></style><div class="rownums"></div><div class="rows">$rows</div></div>',
+  'doc': '<div class="$class"><style></style><div class="rownums"></div><div class="rows">$rows</div></div>',
 }

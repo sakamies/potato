@@ -183,7 +183,6 @@ APP.language = {
         }
         return rows;
       }
-      console.log(rows);
       return rows;
     }
 
@@ -202,7 +201,6 @@ APP.language = {
       language: 'html-simple',
       rows: rows
     }
-    console.log('language.parse return doc', doc);
     return doc;
   },
   stringify: function (doc) {
