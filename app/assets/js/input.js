@@ -144,9 +144,8 @@ APP.input.keydown = function (event) {
       return false;
     },
     setPropType: function (event) {
-      //-1, because pressing 1 should assing the first thing in the tokens array and pressing 0 should assing type 9 accordingly
       if (APP.utils.elementIsProp(sel.elm)) {
-        sel = APP.doc.prop.setType(sel, parseInt(key)-1);
+        sel = APP.doc.prop.setType(sel, APP.language.typeShortcuts[key]);
         return false;
       }
       return true;
@@ -166,17 +165,15 @@ APP.input.keydown = function (event) {
       return true;
     },
     addProp: function (event) {
+      console.log('addProp()');
       if (!APP.utils.elementIsText(sel.elm)) {
         sel = APP.doc.prop.new(sel);
-        var type = APP.doc.prop.getType(sel.elm.previousSibling);
-        if (type !== false) {
-          var nextType = APP.language.tokens[type].next[0];
-          for (var i = 0; i < APP.language.tokens.length; i++) {
-            if (APP.language.tokens[i].name === nextType) {
-              sel = APP.doc.prop.setType(sel, i);
-              return false;
-            }
-          }
+        if (sel.elm.previousSibling) {
+          var type = APP.doc.prop.getType(sel.elm.previousSibling);
+          var nextType = APP.language.types[type].next[0];
+          sel = APP.doc.prop.setType(sel, nextType);
+        } else {
+          sel = APP.doc.prop.setType(sel, APP.language.defaultType);
         }
         return false;
       }
@@ -240,8 +237,8 @@ APP.input.input = function (event) {
 
   //if prop is of default type, try figuring out what type the user wants by looking at the first typed character
   if (textContent.length < 3 && selElmType === 0) {
-    for (var i = 0; i < APP.language.tokens.length; i++) {
-      if (APP.language.tokens[i].startsWith.indexOf(textContent) !== -1) {
+    for (var i = 0; i < APP.language.types.length; i++) {
+      if (APP.language.types[i].startsWith.indexOf(textContent) !== -1) {
         sel = APP.doc.prop.init(sel);
         sel = APP.doc.prop.setType(sel, i);
         APP.selection = sel;
@@ -253,13 +250,12 @@ APP.input.input = function (event) {
   else if (textContent.length > 1) {
     var lastChar = textContent.substring(textContent.length - 1);
     //TODO: normalize non breaking space vs space when comparing lastChar with endsWith
-    console.log(lastChar.charCodeAt(0), APP.language.tokens[selElmType].endsWith[1].charCodeAt(0), lastChar == APP.language.tokens[selElmType].endsWith[1]);
-    var nextType = APP.language.tokens[selElmType].endsWith.indexOf(lastChar);
+    var nextType = APP.language.types[selElmType].endsWith.indexOf(lastChar);
 
     if (nextType !== -1) {
-      nextType = APP.language.tokens[selElmType].next[nextType];
-      for (var i = 0; i < APP.language.tokens.length; i++) {
-        if (APP.language.tokens[i].name === nextType) {
+      nextType = APP.language.types[selElmType].next[nextType];
+      for (var i = 0; i < APP.language.types.length; i++) {
+        if (APP.language.types[i].name === nextType) {
           sel.elm.innerHTML = textContent.substr(0, textContent.length - 1);
           sel = APP.doc.prop.new(sel, i);
           APP.selection = sel;

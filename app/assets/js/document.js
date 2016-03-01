@@ -43,11 +43,6 @@ APP.doc.open = function (data) {
   //TODO: determine language type
   //TODO: reading a file in should generate ids for rows after the input file has been parsed
 
-
-  var style = APP.doc.getStyle(APP.language.tokens);
-  APP.doc.elm.querySelector('style').innerHTML = style;
-
-
   //TODO: Update helper ui/toolbar to match settings, something like css vocabulary would be cool
 
   var newSel = APP.select.element(APP.doc.elm.querySelector('.rows > :first-child'));
@@ -94,7 +89,7 @@ APP.doc.createDom = function (doc) {
     for (var j = 0; j < row.props.length; j++) {
       prop = row.props[j];
       outProp = '';
-      outProp = APP.config.templates.prop.replace('$type', 'e'+prop.type);
+      outProp = APP.config.templates.prop.replace('$type', `type-${prop.type}`);
       outProp = outProp.replace('$text', prop.text);
       outRow += outProp;
     }
@@ -108,34 +103,9 @@ APP.doc.createDom = function (doc) {
   outDoc = outDoc.replace('$rows', outRows);
   return outDoc;
 }
-APP.doc.getStyle = function (tokens) {
-  return tokens.map(function(ent, i) {
-      if (ent.before != '') {
-        var before = `content: '${ent.before}';`
-      }
-      if (ent.after != '') {
-        var after = `content: '${ent.after}';`;
-      }
-      return `
-        .e${i} {
-          color: ${ent.color};
-          margin-left: ${ent.spacing[0]}ch;
-          margin-right: ${ent.spacing[1]}ch;
-        }
-        .e${i}::before {
-          ${before}
-        }
-        .e${i}::after {
-          ${after}
-        }
-        /*.e${i}::selection {
-          color: white;
-          background: ${ent.color};
-        }*/
-      `
-    }).join('');
-}
 
+
+//TODO: input actions should trigger history instead of app.doc.something functions, so if the app internally composes editing functions, it shouldn't create many history entries
 //History
 APP.doc.history.undo = function (sel) {
   if (APP.doc.history.index > 0) {
@@ -165,12 +135,14 @@ APP.doc.history.add = function (data) {
 
 //Takes selection, returns new selection
 APP.doc.row.new = function (sel) {
+  //TODO: use app.doc.prop.new here instead of repeating code
   var indentation = APP.doc.row.getIndentation(sel.row);
   var nextIndentation = APP.doc.row.getIndentation($(sel.row).next()[0]);
   if (nextIndentation && indentation < nextIndentation) {
     indentation = nextIndentation;
   }
   var propTemplate = APP.config.templates.prop.replace('$text', '');
+  propTemplate = propTemplate.replace('$type', APP.language.defaultType);
   var rowTemplate = APP.config.templates.row.replace('$prop', propTemplate);
   rowTemplate = rowTemplate.replace('0ch', indentation + 'ch');
   var firstProp = $(sel.row).after(rowTemplate).next().children().first()[0];
@@ -248,29 +220,41 @@ APP.doc.row.toggleComment = function (sel) {
 }
 
 APP.doc.prop.getType = function (elm) {
-  if (APP.utils.elementIsProp(elm)) {
-    var typeClass = elm.className.match(/e[0-9]/)[0];
-    var type = parseInt(typeClass.substring(1));
-    return type; //number that matches the index of the entity in the language definition
-  } else {
-    return false;
-  }
+  console.log('getType()', elm);
+  var type = elm.className.split(' ');
+  type = type.find(function(item) {
+    console.log('type.find()', item, item.match(/^type-/));
+    return item.match(/^type-/);
+  });
+  console.log('type is', type);
+  return type.substring(5);
 }
 APP.doc.prop.new = function (sel, type) {
+  console.log('prop.new()', sel, type);
   var template = APP.config.templates.prop.replace('$text', '');
-  var prop;
+  var newProp;
 
   if (APP.utils.elementIsRow(sel.elm)) {
-    sel = APP.select.element(sel.elm.lastChild, sel);
-  }
-  prop = $(sel.elm).after(template).next()[0];
-  if (!type) {
-    prop.classList.add('e0');
+    console.log('add prop to row');
+    newProp = $(sel.elm).append(template).children().last()[0];
+    sel = APP.select.element(newProp, sel);
   } else {
-    prop.classList.add('e' + type);
+    console.log('add prop after prop');
+    newProp = $(sel.elm).after(template).next()[0];
+    sel = APP.select.element(newProp, sel);
   }
-  sel = APP.select.next(sel);
+
+  if (!type) {
+    APP.doc.prop.setType(sel, APP.language.defaultType);
+    console.log('no type given', sel)
+  } else {
+    APP.doc.prop.setType(sel, type);
+    console.log('has type', sel, type)
+  }
+
   sel = APP.select.text(sel);
+
+
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel;
 }
@@ -324,13 +308,10 @@ APP.doc.prop.delFW = function (sel) {
 }
 
 APP.doc.prop.setType = function (sel, type) {
-  if (type === -1) {type = 9};
-  if (type < APP.language.tokens.length) {
-    var className = sel.elm.className;
-    className = className.replace(/e[0-9]/, '');
-    sel.elm.className = className;
-    sel.elm.classList.add('e' + type);
-    APP.doc.history.add(APP.doc.elm.innerHTML);
-  }
+  console.log('setType()', sel, type)
+  var className = sel.elm.className;
+  className = className.replace(/(type-[a-z0-9]*)|(\$type)/ig, `type-${type}`);
+  sel.elm.className = className;
+  APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel;
 }

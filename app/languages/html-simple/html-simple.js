@@ -4,9 +4,10 @@ APP.language = {
   name: 'HTML Simple',
   url: 'http://potato?',
   //TODO: move syntax rendering to a css file that's named after the language
-  tokens: [
-    { //the first entity is the default type
-      name: 'name',
+  'defaultType': 'name',
+  'typeShortcuts': {1:'name', 2:'id', 3:'class', 4:'attribute', 5:'value', 6:'text'},
+  types: {
+    'name': { //the first one is the default type
       color: '#f92772',
       startsWith: [],
       contains: '', //TODO: this should probably be a regexp, an array of characters is kinda unwieldy, for now, it's only used to check if the entity can be whitespace only or not
@@ -16,8 +17,7 @@ APP.language = {
       after: '', //always render this text after an entity of this type
       spacing: [0,0],
     },
-    {
-      name: 'id',
+    'id': {
       color: '#be84ff',
       startsWith: ['#'],
       contains: '',
@@ -27,8 +27,7 @@ APP.language = {
       after: '',
       spacing: [0,0],
     },
-    {
-      name: 'class',
+    'class': {
       color: '#f6aa10',
       startsWith: ['.'],
       contains: '',
@@ -38,8 +37,7 @@ APP.language = {
       after: '',
       spacing: [0,0],
     },
-    {
-      name: 'attribute',
+    'attribute': {
       color: '#a6e22d',
       startsWith: [],
       contains: '',
@@ -49,8 +47,7 @@ APP.language = {
       after: ':',
       spacing: [1,0],
     },
-    {
-      name: 'value',
+    'value': {
       color: '#e6db74',
       startsWith: ['"'],
       contains: ' ',
@@ -60,8 +57,7 @@ APP.language = {
       after: '',
       spacing: [0,0],
     },
-    {
-      name: 'text',
+    'text': {
       color: '#ffffff',
       startsWith: [' '],
       contains: ' ',
@@ -71,7 +67,7 @@ APP.language = {
       after: '',
       spacing: [0,0],
     },
-  ],
+  },
   parse: function (text) {
     /*
       Language parsing needs to return an object in this format:
@@ -105,17 +101,17 @@ APP.language = {
       //if domnode is an element
       if (domnode.nodeType === 1) {
         props.push({
-          type: 0,
+          type: 'name',
           text: domnode.nodeName.toLowerCase()
         });
 
         for (var atidx = 0; atidx < domnode.attributes.length; atidx++) {
           props.push({
-            type: 3,
+            type: 'attribute',
             text: domnode.attributes[atidx].name
           });
           props.push({
-            type: 4,
+            type: 'value',
             text: domnode.attributes[atidx].value
           });
         };
@@ -137,7 +133,7 @@ APP.language = {
       // if domnode is text
       else if (domnode.nodeType === 3) {
         props.push({
-          type: 5,
+          type: 'text',
           text: domnode.textContent
         });
         row = {
@@ -160,12 +156,12 @@ APP.language = {
       //if domnode is doctype
       else if (domnode.nodeType === 10) {
         props.push({
-          type: 0,
+          type: 'name',
           text: '!doctype'
         });
         props.push({
-          type: 5,
-          text: domnode.name
+          type: 'text',
+          text: ' ' + domnode.name
         });
         row = {
           indentation: depth,

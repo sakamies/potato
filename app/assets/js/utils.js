@@ -7,6 +7,7 @@ APP.utils.elementIsText = function (elm) {
   return elm.classList.contains('editing');  //TODO: don't hardcode things
 }
 APP.utils.elementIsProp = function (elm) {
+  console.log('elementIsProp()', elm);
   return elm.nodeName === 'I'; //TODO: don't hardcode things
 }
 APP.utils.elementIsRow = function (elm) {
