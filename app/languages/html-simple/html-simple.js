@@ -200,7 +200,7 @@ APP.language = {
     return doc;
   },
   stringify: function (doc) {
-    //Takes in the dom from the editor, outputs it as the text format that the open function can parse
+    //TODO: parse abstract object format to plain html
     var rows = doc.querySelectorAll('.row');
     var outRows = [];
     var out = {};

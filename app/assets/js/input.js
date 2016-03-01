@@ -210,7 +210,7 @@ APP.input.keydown = function (event) {
     setPropType: ((/[0-9]/).test(key) && (mod.meta || mod.ctrl)),
     //TODO: selectAll, selectNone
     //TODO: cut/copy/paste
-    //TODO: strip styles & tags from pasted text
+    //TODO: cleanup pasted text (strip tags & inline styles)
     //TODO: alt+arrows should move along the thee in the doc (parent, child, silbings in the indented structure of the doc), kinda like alt+arrows moves accross word boundaries in regular text editing
   }
 

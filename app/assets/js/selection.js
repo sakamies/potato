@@ -54,6 +54,7 @@ APP.select.row = function (sel) {
   return APP.select.element(sel.elm.parentElement, sel);
 }
 APP.select.next = function (sel) {
+  //TODO: skip folded rows, make folding work first
   var $newSelElm = $(sel.elm).next();
   if ($newSelElm.length !== 0) {
     return APP.select.element($newSelElm[0], sel);
@@ -66,6 +67,7 @@ APP.select.next = function (sel) {
   return sel;
 }
 APP.select.prev = function (sel) {
+  //TODO: skip folded rows, make folding work first
   var $newSelElm = $(sel.elm).prev();
   if ($newSelElm.length !== 0) {
     return APP.select.element($newSelElm[0], sel);
@@ -78,6 +80,7 @@ APP.select.prev = function (sel) {
   return sel;
 }
 APP.select.up = function (sel) {
+  //TODO: skip folded rows, make folding work first
   if (sel.elm.classList.contains('row')) {
     return APP.select.prev(sel);
   }
@@ -97,6 +100,7 @@ APP.select.up = function (sel) {
   }
 }
 APP.select.down = function select (sel) {
+  //TODO: skip folded rows, make folding work first
   if (sel.elm.classList.contains('row')) {
     return APP.select.next(sel);
   }
@@ -116,10 +120,10 @@ APP.select.down = function select (sel) {
   }
 }
 
-APP.select.collapse = function (sel) {
+APP.select.fold = function (sel) {
   // TODO: collapse all children of an element into a [...] or something, that gets skipped when navigating the doc, like in sublime
   //TODO: needs some logig to selection navigation when elements are collapsed
 }
-APP.select.expand = function (sel) {
+APP.select.unfold = function (sel) {
   // TODO: expand collapsed elements
 }

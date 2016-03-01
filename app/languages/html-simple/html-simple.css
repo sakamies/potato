@@ -1,3 +1,6 @@
+/*
+  TODO: make after/before styling more intelligent, like if an attribute doesn't have a value, don't show the ':', so the ':' should probably be on the value as a before and colored differently, maybe white
+*/
 .type-name {
   color: #f92772;
 }

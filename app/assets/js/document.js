@@ -43,7 +43,7 @@ APP.doc.open = function (data) {
   //TODO: determine language type
   //TODO: reading a file in should generate ids for rows after the input file has been parsed
 
-  //TODO: Update helper ui/toolbar to match settings, something like css vocabulary would be cool
+  //TODO: Generate helper ui/toolbar to match settings, something like css vocabulary would be cool
 
   var newSel = APP.select.element(APP.doc.elm.querySelector('.rows > :first-child'));
   APP.doc.history.add(APP.doc.elm.innerHTML);
@@ -51,6 +51,7 @@ APP.doc.open = function (data) {
   return newSel;
 }
 APP.doc.save = function () {
+  //TODO: parse .document dom into abstact object format
   var saveText = APP.language.stringify(APP.doc.elm);
   localStorage.setItem('potato-doc', saveText);
 }
