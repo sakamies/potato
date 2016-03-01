@@ -94,7 +94,7 @@ APP.doc.createDom = function (doc) {
     for (var j = 0; j < row.props.length; j++) {
       prop = row.props[j];
       outProp = '';
-      outProp = APP.config.templates.prop.replace('e0', 'e'+prop.type);
+      outProp = APP.config.templates.prop.replace('$type', 'e'+prop.type);
       outProp = outProp.replace('$text', prop.text);
       outRow += outProp;
     }

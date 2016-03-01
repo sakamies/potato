@@ -1,61 +1,61 @@
-.html-simple .name {
+.type-name {
   color: #f92772;
 }
-.html-simple .name::before {
+.type-name::before {
   content: '';
 }
-.html-simple .name::after {
+.type-name::after {
   content: '';
 }
 
-.html-simple .id {
+.type-id {
   color: #be84ff;
 }
-.html-simple .id::before {
+.type-id::before {
   content: '#';
 }
-.html-simple .id::after {
+.type-id::after {
   content: '';
 }
 
-.html-simple .class {
+.type-class {
   color: #f6aa10;
 }
-.html-simple .class::before {
+.type-class::before {
   content: '.';
 }
-.html-simple .class::after {
+.type-class::after {
   content: '';
 }
 
-.html-simple .attribute {
+.type-attribute {
   color: #a6e22d;
   margin-left: 1ch;
 }
-.html-simple .attribute::before {
+.type-attribute::before {
   content: '.';
 }
-.html-simple .attribute::after {
+.type-attribute::after {
   content: '';
 }
 
-.html-simple .value {
+.type-value {
   color: #e6db74;
 }
-.html-simple .value::before {
+.type-value::before {
   content: '.';
 }
-.html-simple .value::after {
+.type-value::after {
   content: '';
 }
 
-.html-simple .text {
+.type-text {
   color: white;
 }
-.html-simple .text::before {
+.type-text::before {
   content: '.';
 }
-.html-simple .text::after {
+.type-text::after {
   content: '';
 }
 

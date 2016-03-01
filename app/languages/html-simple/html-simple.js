@@ -1,4 +1,4 @@
-//TODO: on app launch, construct a map of type name to type index, so it's easier and faster to refer to types by name in code
+//TODO: make that tokens array into an object that has token names as keys, easier to reason about
 APP.language = {
   id: 'html-simple',
   name: 'HTML Simple',
