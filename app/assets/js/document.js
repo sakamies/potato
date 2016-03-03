@@ -25,7 +25,10 @@ APP.doc.init = function () {
 //TODO: open/save/createDom etc should probably be its own file, maybe document.js and editing.js for functions editing the document
 //File handling
 APP.doc.new = function (language) {
-  $.get('/languages/html-simple/html-simple.html', function(response){
+  //var defaultUrl = '/languages/html-simple/html-simple.html';
+  var defaultUrl = '/languages/html-simple/html-pumpula.net.html';
+  //var defaultUrl = '/languages/html-simple/html-amazon.com.html';
+  $.get(defaultUrl, function(response){
     var sel = APP.doc.open(response);
     APP.doc.init();
     APP.selection = sel;
@@ -94,12 +97,20 @@ APP.doc.createDom = function (doc) {
       //TODO: check prop against its type whitelist, refactor prop.validate() so it can be used here too
       prop = row.props[j];
       outProp = '';
-      outProp = APP.config.templates.prop.replace('$type', `type-${prop.type}`);
+      if (prop.text.match(/^\s+$/) || prop.text === '') {
+        outProp = APP.config.templates.prop.replace('$type', `type-${prop.type} hilite`);
+      } else {
+        outProp = APP.config.templates.prop.replace('$type', `type-${prop.type}`);
+      }
       outProp = outProp.replace('$text', prop.text);
       outRow += outProp;
     }
 
     outRow = APP.config.templates.row.replace('$prop', outRow);
+    console.log(row.commented)
+    if (row.commented) {
+      outRow = outRow.replace('row', 'row comment');
+    }
     outRow = outRow.replace('0ch', row.indentation + 'ch');
     outRows += outRow;
   }
@@ -320,3 +331,19 @@ APP.doc.prop.setType = function (sel, type) {
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return sel;
 }
+APP.doc.prop.validate = function (sel, whitelist) {
+  //TODO: check whitelist and highlight characters that are not on it
+  //TODO: if prop is empty, delete it and select prev or next
+  if (APP.utils.elementIsProp(sel.elm)) {
+    //TODO: make the guts of this function into a more generic function so it can be used inside createDom function too
+    var text = sel.elm.textContent;
+    //check if element is only whitespace and highlight if it is
+    if (text.match(/^\s+$/) || text === '') {
+      sel.elm.classList.add('hilite');
+    } else {
+      sel.elm.classList.remove('hilite');
+    }
+  }
+  return sel;
+}
+

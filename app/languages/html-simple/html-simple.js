@@ -2,70 +2,48 @@
 APP.language = {
   id: 'html-simple',
   name: 'HTML Simple',
-  url: 'http://potato?',
-  //TODO: move syntax rendering to a css file that's named after the language
+  url: 'https://repo.url.here',
   'defaultType': 'name',
-  'typeShortcuts': {1:'name', 2:'id', 3:'class', 4:'attribute', 5:'value', 6:'text'},
+  'shortcuts': {1:'name', 2:'id', 3:'class', 4:'attribute', 5:'value', 6:'text'},
   types: {
-    'name': { //the first one is the default type
-      color: '#f92772',
+    'name': {
       startsWith: [],
-      contains: '', //TODO: this should probably be a regexp, an array of characters is kinda unwieldy, for now, it's only used to check if the entity can be whitespace only or not
+      whitelist: '[A-Za-z]*',
       endsWith: [' ', '.', '#'],
       next: ['attribute', 'class', 'id'],
-      before: '', //always render this text before an entity of this type
-      after: '', //always render this text after an entity of this type
-      spacing: [0,0],
     },
     'id': {
-      color: '#be84ff',
       startsWith: ['#'],
-      contains: '',
+      //In CSS, identifiers (including element names, classes, and IDs in selectors) can contain only the characters [a-zA-Z0-9] and ISO 10646 characters U+00A1 and higher, plus the hyphen (-) and the underscore (_); they cannot start with a digit, or a hyphen followed by a digit. Identifiers can also contain escaped characters and any ISO 10646 character as a numeric code (see next item). For instance, the identifier "B&W?" may be written as "B\&W\?" or "B\26 W\3F".
+      whitelist: '-?[_a-zA-Z]+[_a-zA-Z0-9-]*',
       endsWith: ['.', ' '],
       next: ['class', 'attribute'],
-      before: '#',
-      after: '',
-      spacing: [0,0],
     },
     'class': {
-      color: '#f6aa10',
       startsWith: ['.'],
-      contains: '',
+      whitelist: '-?[_a-zA-Z]+[_a-zA-Z0-9-]*',
       endsWith: ['.', ' ', '#'],
       next: ['class', 'attribute', 'id'],
-      before: '.',
-      after: '',
-      spacing: [0,0],
     },
     'attribute': {
-      color: '#a6e22d',
       startsWith: [],
-      contains: '',
+      whitelist: '',
       endsWith: [':', ' '],
       next: ['value', 'value'],
-      before: '',
-      after: ':',
-      spacing: [1,0],
     },
     'value': {
-      color: '#e6db74',
       startsWith: ['"'],
-      contains: ' ',
+      whitelist: '',
+      escape: true, //TODO: should this be a regexp too? escape everything, or just a whitelist or blacklist?
       endsWith: ['"', ' '],
       next: ['attribute', 'value'],
-      before: '',
-      after: '',
-      spacing: [0,0],
     },
     'text': {
-      color: '#ffffff',
       startsWith: [' '],
-      contains: ' ',
+      whitelist: '',
+      escape: true,
       endsWith: [],
       next: ['text'],
-      before: '',
-      after: '',
-      spacing: [0,0],
     },
   },
   parse: function (text) {
@@ -90,7 +68,6 @@ APP.language = {
 
     function process_node (domnode, depth) {
       //takes a domnode (that can have children), returns a bunch of potato rows
-      //TODO: handle whitespace only nodes (eg. line breaks between well indented html) somehow nicely
 
       if (!depth) { depth = 0; }
 
@@ -136,25 +113,44 @@ APP.language = {
 
       // if domnode is text
       else if (domnode.nodeType === 3) {
+        //Handle whitespace only nodes
+        //ignore text that's just a line break + tabs/spaces
+        //TODO: how to handle the case where there's like "<span></span>text", so there's no whitespace after a tag. Since the text will be on its own row with indentation +1, that no whitespace situation should probably be noted somehow, maybe with the >< whitespace eating crocodiles syntax. Also if there's some text and then a line break, should the line break + whitespace be cleaned up?
+        if (!domnode.textContent.match(/^\s*\n\s*$/)) {
+          props.push({
+            type: 'text',
+            text: domnode.textContent
+          });
+          row = {
+            indentation: depth * APP.config.view.indentation,
+            props: props
+          };
+          rows.push(row);
+        }
+      }
+
+      //if domnode is a comment
+      else if (domnode.nodeType === 8) {
+        console.log('comment node')
+        //TODO: take comment contents and parse as html, but output the rows as commented out rows
+        //make dom node (document.createElement or zepto $()?)
+        //add content text as its innerhtml
+        //run process_node on that dom node
+        //add comment class to all rows that were returned
+        //var comment = document.createElement('template');
+        //comment.innerHTML = domnode.nodeValue;
+        // rows = process_node(inputDom.content);
         props.push({
           type: 'text',
           text: domnode.textContent
         });
         row = {
-          indentation: depth,
+          commented: true,
+          indentation: depth * APP.config.view.indentation,
           props: props
         };
         rows.push(row);
-      }
-
-      //if domnode is a comment
-      else if (domnode.nodeType === 8) {
-        //take comment contents and parse as html, but output the rows as commented out rows
-        //make dom node (document.createElement or zepto $()?)
-        //add content text as its innerhtml
-        //run process_node on that dom node
-        //add comment class to all rows that were returned
-        return {indentation: 0, commented: true, props: [{type: 5, text: 'TODO: comments'}]};
+        console.log(row)
       }
 
       //if domnode is doctype
@@ -168,7 +164,7 @@ APP.language = {
           text: ' ' + domnode.name
         });
         row = {
-          indentation: depth,
+          indentation: depth * APP.config.view.indentation,
           props: props
         };
         rows.push(row);
@@ -178,7 +174,7 @@ APP.language = {
       else if (domnode.nodeType === 9 || domnode.nodeType === 11) {
         if (domnode.childNodes.length != 0) {
           for (var childNum = 0; childNum < domnode.childNodes.length; childNum++) {
-            rows = rows.concat(process_node(domnode.childNodes[childNum], depth+1));
+            rows = rows.concat(process_node(domnode.childNodes[childNum], 0));
           }
         }
         return rows;
@@ -212,7 +208,7 @@ APP.language = {
     for (var i = 0; i < rows.length; i++) {
       var row = rows[i];
       var outRow = {indentation: 0, commented: false, props: []};
-      if (row.classList.contains('com')) {
+      if (row.classList.contains('comment')) {
         outRow.commented = true;
       }
       rowElms = rows[i].querySelectorAll('i');

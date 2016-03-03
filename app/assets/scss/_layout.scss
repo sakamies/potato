@@ -1,16 +1,8 @@
-.layout {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-}
 .document {
-  overflow: auto;
-  height: 100%;
-  min-height: calc(100vh - 49px);
-  padding-bottom: 49px;
+  margin-bottom: 44px;
 }
 .toolbar {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
@@ -18,7 +10,7 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: stretch;
-  height: 49px;
+  height: 44px;
   background-color: $dark;
   border-top: 1px solid $gray3;
 }

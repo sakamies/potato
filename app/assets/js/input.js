@@ -148,7 +148,7 @@ APP.input.keydown = function (event) {
     },
     setPropType: function (event) {
       if (APP.utils.elementIsProp(sel.elm)) {
-        sel = APP.doc.prop.setType(sel, APP.language.typeShortcuts[key]);
+        sel = APP.doc.prop.setType(sel, APP.language.shortcuts[key]);
         return false;
       }
       return true;
@@ -238,7 +238,9 @@ APP.input.input = function (event) {
   var textRange = textSel.getRangeAt(0);
   var allSelected = sel.elm.textContent.length === textRange.startOffset + textRange.endOffset
 
-  //if prop is of default type, try figuring out what type the user wants by looking at the first typed character
+  sel = APP.doc.prop.validate(sel);
+
+  //if prop is of default type, try figuring out what type the user wants by looking at the first typed character(s?)
   if (textContent.length < 3 && selElmType === 0) {
     for (var i = 0; i < APP.language.types.length; i++) {
       if (APP.language.types[i].startsWith.indexOf(textContent) !== -1) {
