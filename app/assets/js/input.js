@@ -26,6 +26,8 @@ APP.input.keydown = function (event) {
   var char = keydef.char;
   var mod = APP.input.getModifiers(event);
 
+  //TODO: Actions should probably be something like APP.actions or useractions or something and be in its own file
+  //TODO: input.js should maybe be input-keyboard.js, so I could add more input-something files if needed
   var actions = {
     new: function (event) {
       APP.doc.new();
@@ -36,7 +38,6 @@ APP.input.keydown = function (event) {
       return false;
     },
     save: function (event) {
-      //TODO: save borks selection somehow?
       APP.doc.save();
       return false;
     },
@@ -88,6 +89,8 @@ APP.input.keydown = function (event) {
         sel = APP.select.element(sel.row.children[0], sel);
         return false;
       } else if (APP.utils.elementIsText(sel.elm)) {
+        //TODO: this should have a check for if the element is only whitespace, but it belongs in the editing functions and not input handling, where should I put it?
+        sel = APP.doc.prop.validate(sel);
         sel = APP.select.element(sel.elm, sel);
         APP.doc.history.add(APP.doc.elm.innerHTML);
         return true;
@@ -249,7 +252,6 @@ APP.input.input = function (event) {
   //if the prop has some content, check the last char of the prop to determine if the user wants to start a new prop of some type
   else if (textContent.length > 1) {
     var lastChar = textContent.substring(textContent.length - 1);
-    //TODO: normalize non breaking space vs space when comparing lastChar with endsWith
     var nextType = APP.language.types[selElmType].endsWith.indexOf(lastChar);
 
     if (nextType !== -1) {

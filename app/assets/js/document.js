@@ -22,6 +22,7 @@ APP.doc.init = function () {
   APP.doc.elm.addEventListener('input', APP.input.input);
 }
 
+//TODO: open/save/createDom etc should probably be its own file, maybe document.js and editing.js for functions editing the document
 //File handling
 APP.doc.new = function (language) {
   $.get('/languages/html-simple/html-simple.html', function(response){
@@ -41,7 +42,7 @@ APP.doc.open = function (data) {
   APP.doc.language = doc.language;
 
   //TODO: determine language type
-  //TODO: reading a file in should generate ids for rows after the input file has been parsed
+  //TODO: reading a file in should generate ids for rows after the input file has been parsed, also generate row numers and have add/remove for row nums when adding o removing rows from doc
 
   //TODO: Generate helper ui/toolbar to match settings, something like css vocabulary would be cool
 
@@ -88,6 +89,9 @@ APP.doc.createDom = function (doc) {
     outRow = '';
 
     for (var j = 0; j < row.props.length; j++) {
+      //TODO: move creating the prop into its own function
+      //TODO: if prop is whitespace only, highlight it somehow
+      //TODO: check prop against its type whitelist, refactor prop.validate() so it can be used here too
       prop = row.props[j];
       outProp = '';
       outProp = APP.config.templates.prop.replace('$type', `type-${prop.type}`);

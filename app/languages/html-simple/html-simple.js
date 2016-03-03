@@ -1,4 +1,4 @@
-//TODO: make that tokens array into an object that has token names as keys, easier to reason about
+//TODO: make app.language object into html-simple.json and load that as APP.language.conf object and leave the parsing functions in html-simple.js
 APP.language = {
   id: 'html-simple',
   name: 'HTML Simple',
@@ -99,6 +99,7 @@ APP.language = {
       var rows = [];
 
       //if domnode is an element
+      //TODO: make a function for each, element, text, comment, doctype & document/fragment
       if (domnode.nodeType === 1) {
         props.push({
           type: 'name',
@@ -116,8 +117,11 @@ APP.language = {
           });
         };
 
+        //TODO: make a functions for creating a row to keep it DRY creating the row into a function
+        console.log('depth', depth);
         row = {
-          indentation: depth,
+
+          indentation: depth * APP.config.view.indentation,
           props: props
         };
         rows.push(row);

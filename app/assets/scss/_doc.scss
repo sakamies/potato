@@ -94,7 +94,7 @@ i.editing {
 .word-wrap {
   .document {
     overflow-x: hidden;
-    white-space: normal;
+    white-space: pre-wrap;
   }
   i {
     max-width: 100%;

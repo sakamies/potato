@@ -10,6 +10,9 @@ APP.selection = {
   'row': null,
   'farthest': 0,
 };
+/*TODO: move utils.elementIsRow etc. under APP.selection
+  like: APP.selection.isRow(), this function should introspect the selection and return if it's a row, same for text & prop
+*/
 
 APP.select = {};
 
@@ -26,10 +29,11 @@ APP.select.text = function (sel) {
   return sel;
 }
 APP.select.element = function (newElm, sel) {
-  //takes new element to select and current selection, returns new selection
+  //Takes new element to select and current selection, returns new selection
   //TODO: if you give in the old selection, the selection collapses to sel, if you don't give in sel, the selection is additive
   var row;
   //TODO: additive selection and all, do this old selection check with $('.selected') & $('.focus')
+  //Clean up old selection
   if (sel && sel.elm !== null) {
     sel.elm.classList.remove('selected');
     sel.elm.classList.remove('focus');
