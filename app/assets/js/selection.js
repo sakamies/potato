@@ -47,7 +47,7 @@ APP.select.element = function (newElm, sel) {
   newElm.tabIndex = 0;
   newElm.focus();
 
-  if (newElm.classList.contains('row')) {
+  if (APP.utils.elementIsRow(newElm)) {
     row = newElm;
   } else {
     row = newElm.parentElement;
@@ -85,7 +85,7 @@ APP.select.prev = function (sel) {
 }
 APP.select.up = function (sel) {
   //TODO: skip folded rows, make folding work first
-  if (sel.elm.classList.contains('row')) {
+  if (APP.utils.elementIsRow(sel.elm)) {
     return APP.select.prev(sel);
   }
   var $newSelElm = $(sel.elm).parent().prev();
@@ -105,7 +105,7 @@ APP.select.up = function (sel) {
 }
 APP.select.down = function select (sel) {
   //TODO: skip folded rows, make folding work first
-  if (sel.elm.classList.contains('row')) {
+  if (APP.utils.elementIsRow(sel.elm)) {
     return APP.select.next(sel);
   }
   var $newSelElm = $(sel.elm).parent().next();
