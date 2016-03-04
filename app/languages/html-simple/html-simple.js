@@ -34,14 +34,14 @@ APP.language = {
     'value': {
       startsWith: ['"'],
       whitelist: '',
-      escape: true, //TODO: should this be a regexp too? escape everything, or just a whitelist or blacklist?
+      escapeText: true, //TODO: should this be a regexp too? escape everything, or just a whitelist or blacklist?
       endsWith: ['"', ' '],
       next: ['attribute', 'value'],
     },
     'text': {
       startsWith: [' '],
       whitelist: '',
-      escape: true,
+      escapeText: true,
       endsWith: [],
       next: ['text'],
     },
@@ -50,14 +50,14 @@ APP.language = {
     /*
       Language parsing needs to return an object in this format:
       {
-        language: html-simple
+        language: string
         rows: [
           {
             indentation: integer
             commented: boolean
             props: [
               {
-                type: integer
+                type: string
                 text: string
               }
             ]
@@ -201,30 +201,43 @@ APP.language = {
   },
   stringify: function (doc) {
     //TODO: parse abstract object format to plain html
-    var rows = doc.querySelectorAll('.row');
-    var outRows = [];
-    var out = {};
+    /*
+      doc spec
+      {
+        language: string
+        rows: [
+          {
+            indentation: integer
+            commented: boolean
+            props: [
+              {
+                type: string
+                text: string
+              }
+            ]
+          }
+        ]
+      }
+    */
 
-    for (var i = 0; i < rows.length; i++) {
-      var row = rows[i];
-      var outRow = {indentation: 0, commented: false, props: []};
-      if (row.classList.contains('comment')) {
-        outRow.commented = true;
-      }
-      rowElms = rows[i].querySelectorAll('i');
-      outRow.indentation = APP.doc.row.getIndentation(row);
-      for (var j = 0; j < rowElms.length; j++) {
-        var elm = rowElms[j];
-        var outElm = {
-          type: APP.doc.prop.getType(elm),
-          text: elm.textContent,
-        }
-        outRow.elms.push(outElm);
-      }
-      outRows.push(outRow);
+    var text = '';
+    for (var i = 0; i < doc.rows.length; i++) {
+      /*TODO:
+        check first prop, if type is name, write '<name ' and make a note somewhere that it's open
+        if first prop type is id or class, write '<div ' and do the same as with name
+          iterate props
+            if prop is id, write 'id="prop.text"'
+            if prop is class, write 'class="prop.text"'
+            if prop is attr, write 'prop.text='
+            if prop is value, write '"prop.text"';
+            if prop is text, output text as is
+        if first prop is text, iterate over props and output as is
+        if doctype, write '<!DOCTYPE 2nd-prop.textContent>'
+      */
+      //TODO: language spec and app needs some smarts about what kind of props are allowed where, like a row that starts with text prop can't have element name and stuff after it
+      doc.rows[i];
     }
 
-    var out = {rows: outRows};
-    return JSON.stringify(out);
+    return text;
   }
 };

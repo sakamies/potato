@@ -22,7 +22,7 @@ APP.doc.init = function () {
   APP.doc.elm.addEventListener('input', APP.input.input);
 }
 
-//TODO: open/save/createDom etc should probably be its own file, maybe document.js and editing.js for functions editing the document
+//TODO: open/save/doc2dom etc should probably be its own file, maybe document.js and editing.js for functions editing the document
 //File handling
 APP.doc.new = function (language) {
   //var defaultUrl = '/languages/html-simple/html-simple.html';
@@ -36,10 +36,10 @@ APP.doc.new = function (language) {
 }
 APP.doc.open = function (data) {
   if (!data) {
-    data = localStorage.getItem('potato-doc');
+    data = localStorage.getItem('potato-html');
   }
   var doc = APP.language.parse(data);
-  var dom = APP.doc.createDom(doc);
+  var dom = APP.doc.doc2dom(doc);
   $('.document').replaceWith(dom);
   APP.doc.elm = document.querySelector('.document');
   APP.doc.language = doc.language;
@@ -54,12 +54,7 @@ APP.doc.open = function (data) {
   APP.doc.init();
   return newSel;
 }
-APP.doc.save = function () {
-  //TODO: parse .document dom into abstact object format
-  var saveText = APP.language.stringify(APP.doc.elm);
-  localStorage.setItem('potato-doc', saveText);
-}
-APP.doc.createDom = function (doc) {
+APP.doc.doc2dom = function (doc) {
   //takes in doc as object, returns rows as dom
   //TODO: actually returns html, not dom, make it return dom?
   /*
@@ -71,7 +66,7 @@ APP.doc.createDom = function (doc) {
           indentation: integer
           commented: boolean
           props: [
-            type: integer
+            type: string
             text: string
           ]
         }
@@ -115,9 +110,63 @@ APP.doc.createDom = function (doc) {
     outRows += outRow;
   }
 
-  outDoc = outDoc.replace('$class', `document ${doc.language}`);
+  outDoc = outDoc.replace('$class', 'document');
+  outDoc = outDoc.replace('$lang', doc.language);
   outDoc = outDoc.replace('$rows', outRows);
   return outDoc;
+}
+
+APP.doc.save = function () {
+  //TODO: parse .document dom into abstact object format
+  var doc = APP.doc.dom2doc(APP.doc.elm);
+  var html = APP.language.stringify(doc);
+  localStorage.setItem('potato-html', html);
+}
+APP.doc.dom2doc = function (dom) {
+  //Takes in dom from editor, returns doc as object
+  /*
+    //TODO: write doc object spec somewhere proper, like dom spec is kinda in the config where the templates are
+    //doc object spec:
+    {
+      language: string
+      rows: [
+        {
+          indentation: integer
+          commented: boolean
+          props: [
+            type: string
+            text: string
+          ]
+        }
+      ]
+    }
+  */
+  console.log(dom);
+  var language  = $(dom).data('lang');
+  var doc = {'language': language, 'rows': []}
+
+  $(dom).find('.row').each(function(index, rowEl) {
+    var props = []
+    $('rowEl').children().each(function(index, propEl) {
+      props.push({
+        type: APP.doc.prop.getType(propEl),
+        text: propEl.textContent, //TODO: escape/don't escape text content based on language config (APP.language.types[type].escapeText)
+      });
+    });
+
+    //TODO: make commenting & indentation into functions that are like row.comment & row.indentation that take their get/set actions as parameters, so there's a jquery style api for editing the document
+    if (rowEl.classList.contains('comment')) {
+      var commented = true;
+    }
+    var row = {
+      'indentation': APP.doc.row.getIndentation(rowEl),
+      'commented': commented,
+      'props': props,
+    };
+    doc.rows.push(row);
+
+    return doc;
+  });
 }
 
 
@@ -335,7 +384,7 @@ APP.doc.prop.validate = function (sel, whitelist) {
   //TODO: check whitelist and highlight characters that are not on it
   //TODO: if prop is empty, delete it and select prev or next
   if (APP.utils.elementIsProp(sel.elm)) {
-    //TODO: make the guts of this function into a more generic function so it can be used inside createDom function too
+    //TODO: make the guts of this function into a more generic function so it can be used inside doc2dom function too
     var text = sel.elm.textContent;
     //check if element is only whitespace and highlight if it is
     if (text.match(/^\s+$/) || text === '') {
