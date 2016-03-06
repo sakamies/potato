@@ -1,4 +1,5 @@
-//TODO: make app.language object into html-simple.json and load that as APP.language.conf object and leave the parsing functions in html-simple.js
+//TODO: make APP.language object into html-simple.json and load that as APP.language.conf object and leave the parsing functions in html-simple.js
+//TODO: language spec and app needs some smarts about what kind of props are allowed where, like a row that starts with text prop can't have element name and stuff after it
 APP.language = {
   id: 'html-simple',
   name: 'HTML Simple',
@@ -69,6 +70,8 @@ APP.language = {
     function process_node (domnode, depth) {
       //takes a domnode (that can have children), returns a bunch of potato rows
 
+      //TODO: does not output the lang="en" attribute on html tag! maybe it borks the first attribute in the doc or the browser somehow ignores the tag?
+
       if (!depth) { depth = 0; }
 
       var props = [];
@@ -95,9 +98,8 @@ APP.language = {
         };
 
         //TODO: make a functions for creating a row to keep it DRY creating the row into a function
-        console.log('depth', depth);
         row = {
-
+          commented: false,
           indentation: depth * APP.config.view.indentation,
           props: props
         };
@@ -113,15 +115,16 @@ APP.language = {
 
       // if domnode is text
       else if (domnode.nodeType === 3) {
+        //TODO: how to handle the case where there's like "<span></span>text", so there's no whitespace after a tag. Since the text will be on its own row that no whitespace situation should probably be noted somehow, maybe with the >< whitespace eating crocodiles syntax. Also if there's some text and then a line break, should the line break + whitespace be cleaned up?
         //Handle whitespace only nodes
         //ignore text that's just a line break + tabs/spaces
-        //TODO: how to handle the case where there's like "<span></span>text", so there's no whitespace after a tag. Since the text will be on its own row with indentation +1, that no whitespace situation should probably be noted somehow, maybe with the >< whitespace eating crocodiles syntax. Also if there's some text and then a line break, should the line break + whitespace be cleaned up?
         if (!domnode.textContent.match(/^\s*\n\s*$/)) {
           props.push({
             type: 'text',
-            text: domnode.textContent
+            text: domnode.textContent.trim(),
           });
           row = {
+            commented: false,
             indentation: depth * APP.config.view.indentation,
             props: props
           };
@@ -150,7 +153,6 @@ APP.language = {
           props: props
         };
         rows.push(row);
-        console.log(row)
       }
 
       //if domnode is doctype
@@ -161,9 +163,10 @@ APP.language = {
         });
         props.push({
           type: 'text',
-          text: ' ' + domnode.name
+          text: domnode.name
         });
         row = {
+          commented: false,
           indentation: depth * APP.config.view.indentation,
           props: props
         };
@@ -200,44 +203,99 @@ APP.language = {
     return doc;
   },
   stringify: function (doc) {
-    //TODO: parse abstract object format to plain html
-    /*
-      doc spec
-      {
-        language: string
-        rows: [
-          {
-            indentation: integer
-            commented: boolean
-            props: [
-              {
-                type: string
-                text: string
-              }
-            ]
-          }
-        ]
-      }
-    */
+    console.log('html-simple.stringify', doc);
 
-    var text = '';
-    for (var i = 0; i < doc.rows.length; i++) {
-      /*TODO:
-        check first prop, if type is name, write '<name ' and make a note somewhere that it's open
-        if first prop type is id or class, write '<div ' and do the same as with name
-          iterate props
-            if prop is id, write 'id="prop.text"'
-            if prop is class, write 'class="prop.text"'
-            if prop is attr, write 'prop.text='
-            if prop is value, write '"prop.text"';
-            if prop is text, output text as is
-        if first prop is text, iterate over props and output as is
-        if doctype, write '<!DOCTYPE 2nd-prop.textContent>'
-      */
-      //TODO: language spec and app needs some smarts about what kind of props are allowed where, like a row that starts with text prop can't have element name and stuff after it
-      doc.rows[i];
+    var html = '';
+    var self_closing_tags = ['!doctype', 'area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr'];
+    var openTags = [];
+    var rows = doc.rows;
+
+    for (var r = 0; r < rows.length; r++) {
+      var row = rows[r];
+      var firstProp = row.props[0];
+      var tagName = null;
+      var selfClosing = false;
+      var rowToClose;
+      var indentation = row.indentation;
+
+      if (r > 0) { html += '\n'}
+      html += ' '.repeat(indentation);
+
+      //Start tag if the row doesn't start with text
+      if (firstProp.type === 'name') {
+        html += `<`;
+        tagName = firstProp.text;
+      } else if (firstProp.type !== 'text') {
+        html += '<div';
+        tagName = 'div';
+      }
+
+      //add started tag to open tags so they can be closed later
+      selfClosing = self_closing_tags.indexOf(tagName) !== -1
+      if (tagName !== null && selfClosing === false) {
+        openTags.push({tagName: tagName, indentation: indentation});
+      }
+
+      //Write out all props
+      //TODO: check for !DOCTYPE tagName and uppercase it
+      for (var p = 0; p < row.props.length; p++) {
+        var prop = row.props[p];
+        if (prop.type === 'name') {
+          html+= `${prop.text}`;
+        }
+        if (prop.type === 'id') {
+          html+= ` id="${prop.text}"`;
+        }
+        if (prop.type === 'class') {
+          html+= ` class="${prop.text}"`;
+        }
+        if (prop.type === 'attribute') {
+          html+= ` ${prop.text}`;
+        }
+        if (prop.type === 'value') {
+          html+= `="${prop.text}"`;
+        }
+        if (p > 0 && prop.type === 'text') {
+          html+= ` ${prop.text}`; //separate text props inside tags and multiple text props on a row with a space, so you can add any code as text inside a tag if you like
+        } else if (prop.type === 'text') {
+          html+= `${prop.text}`;
+        }
+      }
+
+      //end tag
+      if (tagName !== null) {
+        html += '>';
+      }
+
+      //close tags that are indented more than the next row
+      if (r < rows.length - 1) {
+        var nextRow = rows[r+1];
+        for (var t = openTags.length - 1; t >= 0; t--) {
+          if (nextRow.indentation <= openTags[t].indentation) {
+            //TODO: make closeRow into its own function
+            rowToClose = openTags.pop();
+            html += '\n' + ' '.repeat(rowToClose.indentation) + `</${rowToClose.tagName}>`;
+            console.log('nextRow', nextRow, 'rowToClose', rowToClose);
+            if (nextRow.indentation == rowToClose.indentation) {
+              break;
+            }
+          }
+        }
+      }
     }
 
-    return text;
+    //close all unclosed tags after writing all rows
+    for (var i = openTags.length - 1; i >= 0; i--) {
+      rowToClose = openTags.pop();
+      html += '\n' + ' '.repeat(rowToClose.indentation) + `</${rowToClose.tagName}>`;
+    }
+
+    console.log(html);
+    return html;
   }
 };
+
+
+
+
+

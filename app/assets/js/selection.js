@@ -29,10 +29,11 @@ APP.select.text = function (sel) {
   return sel;
 }
 APP.select.element = function (newElm, sel) {
+  console.log('select.element()', newElm, sel);
   //Takes new element to select and current selection, returns new selection
   //TODO: if you give in the old selection, the selection collapses to sel, if you don't give in sel, the selection is additive
+  //TODO: selection object should be an array of selected things
   var row;
-  //TODO: additive selection and all, do this old selection check with $('.selected') & $('.focus')
   //Clean up old selection
   if (sel && sel.elm !== null) {
     sel.elm.classList.remove('selected');

@@ -34,5 +34,8 @@
 .type-text {
   color: white;
 }
+* + .type-text {
+  margin-left: 1ch;
+}
 
 

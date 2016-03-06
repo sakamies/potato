@@ -102,7 +102,6 @@ APP.doc.doc2dom = function (doc) {
     }
 
     outRow = APP.config.templates.row.replace('$prop', outRow);
-    console.log(row.commented)
     if (row.commented) {
       outRow = outRow.replace('row', 'row comment');
     }
@@ -141,13 +140,12 @@ APP.doc.dom2doc = function (dom) {
       ]
     }
   */
-  console.log(dom);
   var language  = $(dom).data('lang');
   var doc = {'language': language, 'rows': []}
 
   $(dom).find('.row').each(function(index, rowEl) {
     var props = []
-    $('rowEl').children().each(function(index, propEl) {
+    $(rowEl).children().each(function(index, propEl) {
       props.push({
         type: APP.doc.prop.getType(propEl),
         text: propEl.textContent, //TODO: escape/don't escape text content based on language config (APP.language.types[type].escapeText)
@@ -165,8 +163,10 @@ APP.doc.dom2doc = function (dom) {
     };
     doc.rows.push(row);
 
-    return doc;
   });
+
+  console.log('doc2dom', dom, doc);
+  return doc;
 }
 
 
@@ -200,19 +200,18 @@ APP.doc.history.add = function (data) {
 
 //Takes selection, returns new selection
 APP.doc.row.new = function (sel) {
+  console.log('row.new()', sel)
   //TODO: use app.doc.prop.new here instead of repeating code
   var indentation = APP.doc.row.getIndentation(sel.row);
   var nextIndentation = APP.doc.row.getIndentation($(sel.row).next()[0]);
   if (nextIndentation && indentation < nextIndentation) {
     indentation = nextIndentation;
   }
-  var propTemplate = APP.config.templates.prop.replace('$text', '');
-  propTemplate = propTemplate.replace('$type', APP.language.defaultType);
-  var rowTemplate = APP.config.templates.row.replace('$prop', propTemplate);
+  var rowTemplate = APP.config.templates.row.replace('$prop', '');
   rowTemplate = rowTemplate.replace('0ch', indentation + 'ch');
-  var firstProp = $(sel.row).after(rowTemplate).next().children().first()[0];
-  var newSel = APP.select.element(firstProp, sel);
-  newSel = APP.select.text(newSel);
+  var newRow = $(sel.row).after(rowTemplate).next()[0];
+  var newSel = APP.select.element(newRow, sel);
+  newSel = APP.doc.prop.new(newSel);
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return newSel;
 }
@@ -298,30 +297,31 @@ APP.doc.prop.new = function (sel, type) {
   console.log('prop.new()', sel, type);
   var template = APP.config.templates.prop.replace('$text', '');
   var newProp;
+  var newSel;
 
   if (APP.utils.elementIsRow(sel.elm)) {
     console.log('add prop to row');
     newProp = $(sel.elm).append(template).children().last()[0];
-    sel = APP.select.element(newProp, sel);
+    newSel = APP.select.element(newProp, sel);
   } else {
     console.log('add prop after prop');
     newProp = $(sel.elm).after(template).next()[0];
-    sel = APP.select.element(newProp, sel);
+    newSel = APP.select.element(newProp, sel);
   }
 
   if (!type) {
-    APP.doc.prop.setType(sel, APP.language.defaultType);
-    console.log('no type given', sel)
+    APP.doc.prop.setType(newSel, APP.language.defaultType);
+    console.log('no type given', newSel)
   } else {
-    APP.doc.prop.setType(sel, type);
-    console.log('has type', sel, type)
+    APP.doc.prop.setType(newSel, type);
+    console.log('has type', newSel, type)
   }
 
-  sel = APP.select.text(sel);
+  newSel = APP.select.text(newSel);
 
 
   APP.doc.history.add(APP.doc.elm.innerHTML);
-  return sel;
+  return newSel;
 }
 APP.doc.prop.init = function (sel) {
   sel.elm.innerHTML = '';
