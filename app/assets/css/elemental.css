@@ -176,7 +176,7 @@ i::after {
 }
 
 .hilite {
-  box-shadow: inset 0px 0px 0px 2px currentColor;
+  box-shadow: inset 0px 0px 0px 1px currentColor;
 }
 
 .row.selected {
