@@ -1,5 +1,5 @@
 //TODO: make APP.language object into html-simple.json and load that as APP.language.conf object and leave the parsing functions in html-simple.js
-//TODO: language spec and app needs some smarts about what kind of props are allowed where, like a row that starts with text prop can't have element name and stuff after it
+//TODO: language spec and app needs some smarts about what kind of props are allowed where, like a row that starts with text prop can't have element name and stuff after it. So like some kinda more general way to define a structure, so the app can visually show what's wonky
 APP.language = {
   id: 'html-simple',
   name: 'HTML Simple',
@@ -47,154 +47,154 @@ APP.language = {
       next: ['text'],
     },
   },
-  parse: function (text) {
-    /*
-      Language parsing needs to return an object in this format:
-      {
-        language: string
-        rows: [
-          {
-            indentation: integer
-            commented: boolean
-            props: [
-              {
-                type: string
-                text: string
-              }
-            ]
-          }
-        ]
+  parseElementNode: function (elNode, depth, commented) {
+    var rows = [];
+    var props = [];
+    props.push({
+      type: 'name',
+      text: elNode.nodeName.toLowerCase()
+    });
+
+    for (var atidx = 0; atidx < elNode.attributes.length; atidx++) {
+      props.push({
+        type: 'attribute',
+        text: elNode.attributes[atidx].name
+      });
+      props.push({
+        type: 'value',
+        text: elNode.attributes[atidx].value
+      });
+    };
+
+    //TODO: make a functions for creating a row to keep it DRY creating the row into a function
+    row = {
+      commented: false,
+      indentation: depth * APP.config.view.indentation,
+      props: props
+    };
+    rows.push(row);
+
+    //recurse over children, if there are any and add to output after row
+    if (elNode.childNodes.length != 0) {
+      for (var childNum = 0; childNum < elNode.childNodes.length; childNum++) {
+        rows = rows.concat(APP.language.parseNode(elNode.childNodes[childNum], depth+1, commented));
       }
-    */
-
-    function process_node (domnode, depth) {
-      //takes a domnode (that can have children), returns a bunch of potato rows
-
-      //TODO: does not output the lang="en" attribute on html tag! maybe it borks the first attribute in the doc or the browser somehow ignores the tag?
-
-      if (!depth) { depth = 0; }
-
-      var props = [];
-      var row = {};
-      var rows = [];
-
-      //if domnode is an element
-      //TODO: make a function for each, element, text, comment, doctype & document/fragment
-      if (domnode.nodeType === 1) {
-        props.push({
-          type: 'name',
-          text: domnode.nodeName.toLowerCase()
-        });
-
-        for (var atidx = 0; atidx < domnode.attributes.length; atidx++) {
-          props.push({
-            type: 'attribute',
-            text: domnode.attributes[atidx].name
-          });
-          props.push({
-            type: 'value',
-            text: domnode.attributes[atidx].value
-          });
-        };
-
-        //TODO: make a functions for creating a row to keep it DRY creating the row into a function
-        row = {
-          commented: false,
-          indentation: depth * APP.config.view.indentation,
-          props: props
-        };
-        rows.push(row);
-
-        //recurse over children, if there are any and add to output after row
-        if (domnode.childNodes.length != 0) {
-          for (var childNum = 0; childNum < domnode.childNodes.length; childNum++) {
-            rows = rows.concat(process_node(domnode.childNodes[childNum], depth+1));
-          }
-        }
-      }
-
-      // if domnode is text
-      else if (domnode.nodeType === 3) {
-        //TODO: how to handle the case where there's like "<span></span>text", so there's no whitespace after a tag. Since the text will be on its own row that no whitespace situation should probably be noted somehow, maybe with the >< whitespace eating crocodiles syntax. Also if there's some text and then a line break, should the line break + whitespace be cleaned up?
-        //Handle whitespace only nodes
-        //ignore text that's just a line break + tabs/spaces
-        if (!domnode.textContent.match(/^\s*\n\s*$/)) {
-          props.push({
-            type: 'text',
-            text: domnode.textContent.trim(),
-          });
-          row = {
-            commented: false,
-            indentation: depth * APP.config.view.indentation,
-            props: props
-          };
-          rows.push(row);
-        }
-      }
-
-      //if domnode is a comment
-      else if (domnode.nodeType === 8) {
-        console.log('comment node')
-        //TODO: take comment contents and parse as html, but output the rows as commented out rows
-        //make dom node (document.createElement or zepto $()?)
-        //add content text as its innerhtml
-        //run process_node on that dom node
-        //add comment class to all rows that were returned
-        //var comment = document.createElement('template');
-        //comment.innerHTML = domnode.nodeValue;
-        // rows = process_node(inputDom.content);
-        props.push({
-          type: 'text',
-          text: domnode.textContent
-        });
-        row = {
-          commented: true,
-          indentation: depth * APP.config.view.indentation,
-          props: props
-        };
-        rows.push(row);
-      }
-
-      //if domnode is doctype
-      else if (domnode.nodeType === 10) {
-        props.push({
-          type: 'name',
-          text: '!doctype'
-        });
-        props.push({
-          type: 'text',
-          text: domnode.name
-        });
-        row = {
-          commented: false,
-          indentation: depth * APP.config.view.indentation,
-          props: props
-        };
-        rows.push(row);
-      }
-
-      //if domnode is a full document or document fragment node, recurse over children
-      else if (domnode.nodeType === 9 || domnode.nodeType === 11) {
-        if (domnode.childNodes.length != 0) {
-          for (var childNum = 0; childNum < domnode.childNodes.length; childNum++) {
-            rows = rows.concat(process_node(domnode.childNodes[childNum], 0));
-          }
-        }
-        return rows;
-      }
+    }
+    return rows;
+  },
+  parseTextNode: function (textNode, depth, commented) {
+    //TODO: how to handle the case where there's like "<span></span>text", so there's no whitespace after a tag. Since the text will be on its own row that no whitespace situation should probably be noted somehow, maybe with the >< whitespace eating crocodiles syntax. Also if there's some text and then a line break, should the line break + whitespace be cleaned up?
+    //Handle whitespace only nodes
+    //ignore text that's just a line break + tabs/spaces
+    var props = [];
+    var row = {};
+    var rows = [];
+    if (!textNode.textContent.match(/^\s*\n\s*$/)) {
+      props.push({
+        type: 'text',
+        text: textNode.textContent.trim(),
+      });
+      row = {
+        commented: false,
+        indentation: depth * APP.config.view.indentation,
+        props: props
+      };
+      rows.push(row);
       return rows;
     }
+  },
+  parseCommentNode: function (commentNode, depth, commented) {
+    //TODO: use language.parse to parse contents of comment node and concat that to rows, remember to add commented parameter
+    var props = [];
+    var row = {};
+    var rows = [];
+    props.push({
+      type: 'text',
+      text: commentNode.textContent.trim()
+    });
+    row = {
+      commented: true,
+      indentation: depth * APP.config.view.indentation,
+      props: props
+    };
+    rows.push(row);
+    return rows;
+  },
+  parseDoctypeNode: function (doctypeNode, depth, commented) {
+    var props = [];
+    var row = {};
+    var rows = [];
+    props.push({
+      type: 'name',
+      text: '!doctype'
+    });
+    props.push({
+      type: 'text',
+      text: doctypeNode.name
+    });
+    row = {
+      commented: false,
+      indentation: depth * APP.config.view.indentation,
+      props: props
+    };
+    rows.push(row);
+    return rows;
+  },
+  parseDocumentNode: function (docNode, depth, commented) {
+    var rows = [];
+    if (docNode.childNodes.length != 0) {
+      for (var childNum = 0; childNum < docNode.childNodes.length; childNum++) {
+        rows = rows.concat(APP.language.parseNode(docNode.childNodes[childNum], 0));
+      }
+    }
+    return rows;
+  },
+  parseNode: function (domnode, depth, commented) {
+    //takes a domnode (that can have children), returns a bunch of potato rows
 
+    var props = [];
+    var row = {};
+    var rows = [];
+
+    //if domnode is an element
+    //TODO: make a function for each, element, text, comment, doctype & document/fragment
+    if (domnode.nodeType === 1) {
+      rows = rows.concat(APP.language.parseElementNode(domnode, depth, commented));
+    }
+    else if (domnode.nodeType === 3) {
+      //TODO: handle whitespace inside pre, code, textarea (etc?) elements somehow
+      var textRow = APP.language.parseTextNode(domnode, depth, commented);
+      if (textRow) {
+        rows = rows.concat(textRow);
+      }
+    }
+    else if (domnode.nodeType === 8 || commented === true) {
+      rows = rows.concat(APP.language.parseCommentNode(domnode, depth, commented));
+    }
+    else if (domnode.nodeType === 10) {
+      rows = rows.concat(APP.language.parseDoctypeNode(domnode, depth, commented));
+    }
+    //if domnode is a full document or document fragment node, recurse over children
+    else if (domnode.nodeType === 9 || domnode.nodeType === 11) {
+      rows = rows.concat(APP.language.parseDocumentNode(domnode, depth, commented));
+    }
+    return rows;
+  },
+  parse: function (htmltext, depth, commented) {
+    console.log('parse()', depth, commented);
     var inputDom = null;
     var rows = [];
-    if (text.indexOf('<!DOCTYPE') != -1) {
+    if (!depth) {
+      depth = 0;
+    }
+    if (htmltext.indexOf('<!DOCTYPE') != -1) {
       inputDom = document.implementation.createHTMLDocument('');
-      inputDom.documentElement.innerHTML = text;
-      rows = process_node(inputDom);
+      inputDom.documentElement.innerHTML = htmltext;
+      rows = APP.language.parseNode(inputDom, depth, commented);
     } else {
       inputDom = document.createElement('template');
-      inputDom.innerHTML = text;
-      rows = process_node(inputDom.content);
+      inputDom.innerHTML = htmltext;
+      rows = APP.language.parseNode(inputDom.content, depth, commented);
     }
     var doc = {
       language: 'html-simple',
@@ -294,8 +294,3 @@ APP.language = {
     return html;
   }
 };
-
-
-
-
-
