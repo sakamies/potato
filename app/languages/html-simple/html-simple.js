@@ -68,7 +68,7 @@ APP.language = {
 
     //TODO: make a functions for creating a row to keep it DRY creating the row into a function
     row = {
-      commented: false,
+      commented: commented,
       indentation: depth * APP.config.view.indentation,
       props: props
     };
@@ -89,35 +89,24 @@ APP.language = {
     var props = [];
     var row = {};
     var rows = [];
-    if (!textNode.textContent.match(/^\s*\n\s*$/)) {
-      props.push({
-        type: 'text',
-        text: textNode.textContent.trim(),
-      });
-      row = {
-        commented: false,
-        indentation: depth * APP.config.view.indentation,
-        props: props
-      };
-      rows.push(row);
-      return rows;
-    }
-  },
-  parseCommentNode: function (commentNode, depth, commented) {
-    //TODO: use language.parse to parse contents of comment node and concat that to rows, remember to add commented parameter
-    var props = [];
-    var row = {};
-    var rows = [];
     props.push({
       type: 'text',
-      text: commentNode.textContent.trim()
+      text: textNode.textContent.trim(),
     });
     row = {
-      commented: true,
+      commented: commented,
       indentation: depth * APP.config.view.indentation,
       props: props
     };
     rows.push(row);
+    return rows;
+  },
+  parseCommentNode: function (commentNode, depth, commented) {
+    //TODO: use language.parse to parse contents of comment node and concat that to rows, remember to add commented parameter
+    var rows = [];
+    var comment = commentNode.textContent;
+    commented = 'KAKKA';
+    rows = rows.concat(APP.language.parseHTML(comment, depth, commented));
     return rows;
   },
   parseDoctypeNode: function (doctypeNode, depth, commented) {
@@ -133,7 +122,7 @@ APP.language = {
       text: doctypeNode.name
     });
     row = {
-      commented: false,
+      commented: commented,
       indentation: depth * APP.config.view.indentation,
       props: props
     };
@@ -144,7 +133,7 @@ APP.language = {
     var rows = [];
     if (docNode.childNodes.length != 0) {
       for (var childNum = 0; childNum < docNode.childNodes.length; childNum++) {
-        rows = rows.concat(APP.language.parseNode(docNode.childNodes[childNum], 0));
+        rows = rows.concat(APP.language.parseNode(docNode.childNodes[childNum], depth, commented));
       }
     }
     return rows;
@@ -161,14 +150,14 @@ APP.language = {
     if (domnode.nodeType === 1) {
       rows = rows.concat(APP.language.parseElementNode(domnode, depth, commented));
     }
-    else if (domnode.nodeType === 3) {
-      //TODO: handle whitespace inside pre, code, textarea (etc?) elements somehow
+    else if (domnode.nodeType === 3 && !domnode.textContent.match(/^\s*\n\s*$/)) {
+      //TODO: handle whitespace inside pre, code, textarea (etc?) elements somehow. Check ['pre', 'code'].indexOf(parentNode.nodeName)
       var textRow = APP.language.parseTextNode(domnode, depth, commented);
       if (textRow) {
         rows = rows.concat(textRow);
       }
     }
-    else if (domnode.nodeType === 8 || commented === true) {
+    else if (domnode.nodeType === 8) {
       rows = rows.concat(APP.language.parseCommentNode(domnode, depth, commented));
     }
     else if (domnode.nodeType === 10) {
@@ -178,11 +167,10 @@ APP.language = {
     else if (domnode.nodeType === 9 || domnode.nodeType === 11) {
       rows = rows.concat(APP.language.parseDocumentNode(domnode, depth, commented));
     }
+
     return rows;
   },
-  parse: function (htmltext, depth, commented) {
-    console.log('parse()', depth, commented);
-    var inputDom = null;
+  parseHTML: function (htmltext, depth, commented) {
     var rows = [];
     if (!depth) {
       depth = 0;
@@ -190,12 +178,16 @@ APP.language = {
     if (htmltext.indexOf('<!DOCTYPE') != -1) {
       inputDom = document.implementation.createHTMLDocument('');
       inputDom.documentElement.innerHTML = htmltext;
-      rows = APP.language.parseNode(inputDom, depth, commented);
+      rows = rows.concat(APP.language.parseNode(inputDom, depth, commented));
     } else {
       inputDom = document.createElement('template');
       inputDom.innerHTML = htmltext;
-      rows = APP.language.parseNode(inputDom.content, depth, commented);
+      rows = rows.concat(APP.language.parseNode(inputDom.content, depth, commented));
     }
+    return rows;
+  },
+  parse: function (string) {
+    var rows = APP.language.parseHTML(string);
     var doc = {
       language: 'html-simple',
       rows: rows
@@ -203,7 +195,7 @@ APP.language = {
     return doc;
   },
   stringify: function (doc) {
-    console.log('html-simple.stringify', doc);
+    console.log('html-simple.stringify()', doc);
 
     var html = '';
     var self_closing_tags = ['!doctype', 'area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr'];
