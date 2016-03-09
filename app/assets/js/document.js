@@ -13,6 +13,25 @@ APP.doc = {
   'lastid': 9,
 };
 
+/*
+  Internal abstract data format for the document is this:
+  {
+    language: string
+    rows: [
+      {
+        indentation: integer
+        commented: boolean
+        props: [
+          {
+            type: string
+            text: string
+          }
+        ]
+      }
+    ]
+  }
+*/
+
 APP.doc.init = function () {
   APP.doc.elm.addEventListener('mousedown', APP.pointer.mousedown);
   APP.doc.elm.addEventListener('mouseup', APP.pointer.mouseup);
@@ -26,7 +45,7 @@ APP.doc.init = function () {
 //File handling
 APP.doc.new = function (language) {
   //var defaultUrl = '/languages/html-simple/html-simple.html';
-  var defaultUrl = '/languages/html-simple/html-pumpula.net.html';
+  var defaultUrl = '/languages/html-simple/html-simple.html';
   //var defaultUrl = '/languages/html-simple/html-amazon.com.html';
   $.get(defaultUrl, function(response){
     var sel = APP.doc.open(response);

@@ -136,8 +136,8 @@ textarea:focus {
   line-height: 24px;
   color: #f8f8f2;
   background-color: #272822;
-  background-image: -webkit-linear-gradient(left, #34332a 1px, transparent 1px);
-  background-image: linear-gradient(left, #34332a 1px, transparent 1px);
+  background-image: -webkit-linear-gradient(right, #34332a 1px, transparent 1px);
+  background-image: linear-gradient(to left, #34332a 1px, transparent 1px);
   background-position: 1px top;
   background-repeat: repeat-x;
   background-size: 2ch 100%;
