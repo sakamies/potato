@@ -28,6 +28,7 @@ APP.input.keydown = function (event) {
 }
 
 APP.input.textInput = function (event) {
+  //TODO: use getContext here too so the important bits can be scoped to editing a props text
   var sel = APP.selection;
   var selElmType = APP.doc.prop.getType(sel.elm);
   //var whitelist = /[a-z0-9!"#$%&'()*+,.\/:;<=>?@\[\] ^_`{|}~-]/; //TODO: whitelisted or blacklisted characters should be based on language definition

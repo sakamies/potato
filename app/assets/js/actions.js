@@ -1,5 +1,3 @@
-//TODO: actions should return a new selection and nothing else
-
 APP.actions = {
   new: function (key, context, sel) {
     //TODO: new action should launch a new window that inits itself

@@ -1,18 +1,17 @@
-//Selection (sel) object looks like this:
-//{
-  //'row': <dom element reference>,
-  //'elm': <dom element reference>,
-  //'farthest': 0, // TODO: So you don't reset your column even if you go through a few rows that have only one column or so
-//}
+/*
+  //Selection (sel) object looks like this:
+  {
+    'row': <dom element reference>,
+    'elm': <dom element reference>,
+    'farthest': 0, // TODO: Implement farthest selection so you don't reset your column even if you go through a few rows that have only one column or so
+  }
+*/
 
 APP.selection = {
   'elm': null,
   'row': null,
   'farthest': 0,
 };
-/*TODO: move utils.elementIsRow etc. under APP.selection
-  like: APP.selection.isRow(), this function should introspect the selection and return if it's a row, same for text & prop
-*/
 
 APP.select = {};
 
