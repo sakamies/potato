@@ -214,7 +214,7 @@ APP.input.keydown = function (event) {
     //TODO: selectAll, selectNone
     //TODO: cut/copy/paste
     //TODO: cleanup pasted text (strip tags & inline styles)
-    //TODO: alt+arrows should move along the thee in the doc (parent, child, silbings in the indented structure of the doc), kinda like alt+arrows moves accross word boundaries in regular text editing
+    //TODO: alt+arrows should move along the tree in the doc (parent, child, silbings in the indented structure of the doc), kinda like alt+arrows moves accross word boundaries in regular text editing
   }
 
   for (action in keymap) {

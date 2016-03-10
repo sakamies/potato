@@ -65,8 +65,6 @@ APP.language = {
         text: elNode.attributes[atidx].value
       });
     };
-
-    //TODO: make a functions for creating a row to keep it DRY creating the row into a function
     row = {
       commented: commented,
       indentation: depth * APP.config.view.indentation,
@@ -84,8 +82,7 @@ APP.language = {
   },
   parseTextNode: function (textNode, depth, commented) {
     //TODO: how to handle the case where there's like "<span></span>text", so there's no whitespace after a tag. Since the text will be on its own row that no whitespace situation should probably be noted somehow, maybe with the >< whitespace eating crocodiles syntax. Also if there's some text and then a line break, should the line break + whitespace be cleaned up?
-    //Handle whitespace only nodes
-    //ignore text that's just a line break + tabs/spaces
+    //TODO: handle whitespace inside pre, code, textarea (etc?) elements somehow. Check ['pre', 'code'].indexOf(parentNode.nodeName)
     var props = [];
     var row = {};
     var rows = [];
@@ -102,10 +99,9 @@ APP.language = {
     return rows;
   },
   parseCommentNode: function (commentNode, depth, commented) {
-    //TODO: use language.parse to parse contents of comment node and concat that to rows, remember to add commented parameter
     var rows = [];
     var comment = commentNode.textContent;
-    commented = 'KAKKA';
+    commented = true;
     rows = rows.concat(APP.language.parseHTML(comment, depth, commented));
     return rows;
   },
@@ -139,19 +135,12 @@ APP.language = {
     return rows;
   },
   parseNode: function (domnode, depth, commented) {
-    //takes a domnode (that can have children), returns a bunch of potato rows
-
-    var props = [];
-    var row = {};
+    //takes a domnode (that can have children), returns an array of rows
     var rows = [];
-
-    //if domnode is an element
-    //TODO: make a function for each, element, text, comment, doctype & document/fragment
     if (domnode.nodeType === 1) {
       rows = rows.concat(APP.language.parseElementNode(domnode, depth, commented));
     }
     else if (domnode.nodeType === 3 && !domnode.textContent.match(/^\s*\n\s*$/)) {
-      //TODO: handle whitespace inside pre, code, textarea (etc?) elements somehow. Check ['pre', 'code'].indexOf(parentNode.nodeName)
       var textRow = APP.language.parseTextNode(domnode, depth, commented);
       if (textRow) {
         rows = rows.concat(textRow);
@@ -195,8 +184,6 @@ APP.language = {
     return doc;
   },
   stringify: function (doc) {
-    console.log('html-simple.stringify()', doc);
-
     var html = '';
     var self_closing_tags = ['!doctype', 'area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr'];
     var openTags = [];
@@ -222,14 +209,13 @@ APP.language = {
         tagName = 'div';
       }
 
-      //add started tag to open tags so they can be closed later
+      //Add started tag to open tags so they can be closed later
       selfClosing = self_closing_tags.indexOf(tagName) !== -1
       if (tagName !== null && selfClosing === false) {
         openTags.push({tagName: tagName, indentation: indentation});
       }
 
       //Write out all props
-      //TODO: check for !DOCTYPE tagName and uppercase it
       for (var p = 0; p < row.props.length; p++) {
         var prop = row.props[p];
         if (prop.type === 'name') {
@@ -248,23 +234,22 @@ APP.language = {
           html+= `="${prop.text}"`;
         }
         if (p > 0 && prop.type === 'text') {
-          html+= ` ${prop.text}`; //separate text props inside tags and multiple text props on a row with a space, so you can add any code as text inside a tag if you like
+          html+= ` ${prop.text}`; //Separate text props inside tags and multiple text props on a row with a space, so you can add any code as text inside a tag if you like
         } else if (prop.type === 'text') {
           html+= `${prop.text}`;
         }
       }
 
-      //end tag
+      //Close the start tag
       if (tagName !== null) {
         html += '>';
       }
 
-      //close tags that are indented more than the next row
+      //Write end tags for rows that are indented more than the next row
       if (r < rows.length - 1) {
         var nextRow = rows[r+1];
         for (var t = openTags.length - 1; t >= 0; t--) {
           if (nextRow.indentation <= openTags[t].indentation) {
-            //TODO: make closeRow into its own function
             rowToClose = openTags.pop();
             html += '\n' + ' '.repeat(rowToClose.indentation) + `</${rowToClose.tagName}>`;
             console.log('nextRow', nextRow, 'rowToClose', rowToClose);
