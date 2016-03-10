@@ -3,7 +3,7 @@ APP.doc.history = {
   data: []
 }
 
-//TODO: input actions should trigger history instead of app.doc.something functions, so if the app internally composes editing functions, it shouldn't create many history entries
+//TODO: input actions should trigger history instead of app.doc.something functions, so if the app internally composes editing functions, it shouldn't create many history entries.
 //History
 APP.doc.history.undo = function (sel) {
   if (APP.doc.history.index > 0) {

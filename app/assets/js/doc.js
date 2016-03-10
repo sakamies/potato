@@ -34,11 +34,10 @@ APP.doc.init = function () {
   APP.doc.elm.addEventListener('click', APP.pointer.click);
   APP.doc.elm.addEventListener('dblclick', APP.pointer.doubleclick);
   APP.doc.elm.addEventListener('keydown', APP.input.keydown);
-  APP.doc.elm.addEventListener('input', APP.input.input);
+  APP.doc.elm.addEventListener('input', APP.input.textInput);
 }
 
-//TODO: open/save/doc2dom etc should probably be its own file, maybe document.js and editing.js for functions editing the document
-//File handling
+//TODO: dom2doc & doc2dom should be a function APP.doc.rows(), without parameters, it should return dom2doc result and with a paameter of a potato document js object, it should return doc2dom. Then all row editing functions would be a part of that function. Ugh, maybe.
 APP.doc.new = function (language) {
   //var defaultUrl = '/languages/html-simple/html-simple.html';
   var defaultUrl = '/languages/html-simple/html-simple.html';
@@ -130,11 +129,14 @@ APP.doc.doc2dom = function (doc) {
   return outDoc;
 }
 
-APP.doc.save = function () {
+APP.doc.save = function (dest) {
+  //TODO: should take a parameter on where to save, or take dom in and return html?
   //TODO: parse .document dom into abstact object format
   var doc = APP.doc.dom2doc(APP.doc.elm);
   var html = APP.language.stringify(doc);
-  localStorage.setItem('potato-html', html);
+  if (dest === 'localStorage') {
+    localStorage.setItem('potato-html', html);
+  }
 }
 APP.doc.dom2doc = function (dom) {
   //Takes in dom from editor, returns doc as object

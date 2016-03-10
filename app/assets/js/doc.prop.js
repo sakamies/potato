@@ -37,7 +37,6 @@ APP.doc.prop.new = function (sel, type) {
 
   newSel = APP.select.text(newSel);
 
-
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return newSel;
 }
@@ -48,7 +47,7 @@ APP.doc.prop.init = function (sel) {
   return newSel;
 }
 APP.doc.prop.del = function (sel) {
-  if (sel.row.children.length === 0) {
+  if (sel.row.children.length === 1) {
     sel.row.remove();
   } else {
     sel.elm.remove();

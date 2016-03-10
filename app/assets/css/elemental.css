@@ -219,15 +219,6 @@ i.editing {
   background-color: #f8f8f2;
 }
 
-.hide-syntax i {
-  margin: 0 1ch 0 0 !important;
-}
-
-.hide-syntax i::before,
-.hide-syntax i::after {
-  display: none !important;
-}
-
 .word-wrap .document {
   overflow-x: hidden;
   white-space: pre-wrap;
