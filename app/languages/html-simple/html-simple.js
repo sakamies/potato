@@ -164,7 +164,7 @@ APP.language = {
     if (!depth) {
       depth = 0;
     }
-    if (htmltext.indexOf('<!DOCTYPE') != -1) {
+    if (htmltext.indexOf('<!DOCTYPE') != -1 || htmltext.indexOf('<!doctype') != -1) {
       inputDom = document.implementation.createHTMLDocument('');
       inputDom.documentElement.innerHTML = htmltext;
       rows = rows.concat(APP.language.parseNode(inputDom, depth, commented));
@@ -176,6 +176,7 @@ APP.language = {
     return rows;
   },
   parse: function (string) {
+    console.log('parse()', string)
     var rows = APP.language.parseHTML(string);
     var doc = {
       language: 'html-simple',
@@ -201,6 +202,7 @@ APP.language = {
       html += ' '.repeat(indentation);
 
       //Start tag if the row doesn't start with text
+      //TODO: if row is commented, put <!-- before start and continue parsing, when encoutering the first non commented row, add --> before that
       if (firstProp.type === 'name') {
         html += `<`;
         tagName = firstProp.text;
@@ -252,7 +254,6 @@ APP.language = {
           if (nextRow.indentation <= openTags[t].indentation) {
             rowToClose = openTags.pop();
             html += '\n' + ' '.repeat(rowToClose.indentation) + `</${rowToClose.tagName}>`;
-            console.log('nextRow', nextRow, 'rowToClose', rowToClose);
             if (nextRow.indentation == rowToClose.indentation) {
               break;
             }
@@ -267,7 +268,7 @@ APP.language = {
       html += '\n' + ' '.repeat(rowToClose.indentation) + `</${rowToClose.tagName}>`;
     }
 
-    console.log(html);
+    //console.log(html);
     return html;
   }
 };

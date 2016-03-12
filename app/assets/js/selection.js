@@ -8,30 +8,19 @@
 */
 
 APP.selection = {
-  'elm': null,
   'row': null,
+  'elm': null,
   'farthest': 0,
 };
+//TODO: refactor selection to work with indexes instead of element references, that way the selection is separate from the document and easier to reason about. Clicking an element requires finding out its index, which might be slow on large documents.
 
 APP.select = {};
 
-APP.select.text = function (sel) {
-
-  //collapse selection
-  sel = APP.select.element(sel.elm, sel);
-
-  //set as editable and select
-  sel.elm.contentEditable = true;
-  sel.elm.focus();
-  sel.elm.classList.add('editing');
-  window.getSelection().selectAllChildren(sel.elm);
-  return sel;
-}
 APP.select.element = function (newElm, oldSel) {
-  //console.log('select.element()', 'newElm', newElm, 'oldSel', oldSel);
   //Takes new element to select and current selection, returns new selection
-  //TODO: if you give in the old selection, the selection collapses to sel, if you don't give in sel, the selection is additive
+  //TODO: Should additive selection track selected stuff in the seletion object, or just sprinkle classes to the document and clean them up with selectors here?
   //TODO: selection object should be an array of selected things
+  //if you give in the old selection, the selection collapses to sel, if you don't give in sel, the selection is additive
   var row;
   //Clean up old selection
   if (oldSel && oldSel.elm !== null) {
@@ -53,6 +42,18 @@ APP.select.element = function (newElm, oldSel) {
     row = newElm.parentElement;
   }
   return {'elm': newElm, row: row};
+}
+APP.select.text = function (sel) {
+
+  //collapse selection
+  sel = APP.select.element(sel.elm, sel);
+
+  //set as editable and select
+  sel.elm.contentEditable = true;
+  sel.elm.focus();
+  sel.elm.classList.add('editing');
+  window.getSelection().selectAllChildren(sel.elm);
+  return sel;
 }
 APP.select.row = function (sel) {
   return APP.select.element(sel.elm.parentElement, sel);

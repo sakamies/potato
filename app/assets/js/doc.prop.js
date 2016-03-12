@@ -2,27 +2,21 @@
 
 
 APP.doc.prop.getType = function (elm) {
-  console.log('getType()', elm);
   var type = elm.className.split(' ');
   type = type.find(function(item) {
-    console.log('type.find()', item, item.match(/^type-/));
     return item.match(/^type-/);
   });
-  console.log('type is', type);
   return type.substring(5);
 }
 APP.doc.prop.new = function (sel, type) {
-  console.log('prop.new()', sel, type);
   var template = APP.config.templates.prop.replace('$text', '');
   var newProp;
   var newSel;
 
   if (APP.utils.elementIsRow(sel.elm)) {
-    console.log('add prop to row');
     newProp = $(sel.elm).append(template).children().last()[0];
     newSel = APP.select.element(newProp, sel);
   } else {
-    console.log('add prop after prop');
     newProp = $(sel.elm).after(template).next()[0];
     newSel = APP.select.element(newProp, sel);
   }
@@ -53,7 +47,6 @@ APP.doc.prop.del = function (sel) {
     sel.elm.remove();
   }
   APP.doc.history.add(APP.doc.elm.innerHTML);
-  //TODO: on selection, if elm & row are null, when pressing down, select first thing in document, when pressing up, select last thing in document
   return {elm: null, row: null};
 }
 APP.doc.prop.delBW = function (sel) {

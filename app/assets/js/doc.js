@@ -3,7 +3,8 @@
 
 APP.doc = {
   language: null,
-  elm: null, //refers to the dom element that contains this document
+  elm: null, //dom element that contains this document
+  rows: null, //dom element that contains rows
   row: {}, //row edit functions
   prop: {}, //property edit functions
   'lastid': 9,
@@ -102,7 +103,6 @@ APP.doc.doc2dom = function (doc) {
 
     for (var j = 0; j < row.props.length; j++) {
       //TODO: move creating the prop into its own function
-      //TODO: if prop is whitespace only, highlight it somehow
       //TODO: check prop against its type whitelist, refactor prop.validate() so it can be used here too
       prop = row.props[j];
       outProp = '';
@@ -130,12 +130,14 @@ APP.doc.doc2dom = function (doc) {
 }
 
 APP.doc.save = function (dest) {
-  //TODO: should take a parameter on where to save, or take dom in and return html?
+  console.log('doc.save()', !dest);
+  //TODO: should take in a parameter on where to save
   //TODO: parse .document dom into abstact object format
   var doc = APP.doc.dom2doc(APP.doc.elm);
   var html = APP.language.stringify(doc);
-  if (dest === 'localStorage') {
+  if (!dest) {
     localStorage.setItem('potato-html', html);
+    console.log(localStorage.getItem('potato-html', html));
   }
 }
 APP.doc.dom2doc = function (dom) {
@@ -165,7 +167,7 @@ APP.doc.dom2doc = function (dom) {
 
   });
 
-  console.log('doc2dom', dom, doc);
+  console.log('dom2doc', dom, doc);
   return doc;
 }
 

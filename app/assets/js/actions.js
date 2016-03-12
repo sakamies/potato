@@ -23,6 +23,9 @@ APP.actions = {
   },
   selectPrev: function (key, context, sel) {
     //TODO: Check for shift key and handle additive selection
+    //TODO: on selection, if nothing is selected (elm & row are null), when pressing down, select first thing in document, when pressing up, select last thing in document
+    //TODO: additive selection
+
     var newSel = APP.select.prev(sel);
     return newSel;
   },
