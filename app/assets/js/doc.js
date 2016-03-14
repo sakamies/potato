@@ -130,7 +130,7 @@ APP.doc.doc2dom = function (doc) {
 }
 
 APP.doc.save = function (dest) {
-  console.log('doc.save()', !dest);
+  //console.log('doc.save()', !dest);
   //TODO: should take in a parameter on where to save
   //TODO: parse .document dom into abstact object format
   var doc = APP.doc.dom2doc(APP.doc.elm);
@@ -167,7 +167,7 @@ APP.doc.dom2doc = function (dom) {
 
   });
 
-  console.log('dom2doc', dom, doc);
+  //console.log('dom2doc', dom, doc);
   return doc;
 }
 

@@ -69,7 +69,7 @@ APP.input.getKeymap = function (key, ctx, mod) {
     },
     newRow: {
       keypress: (key === '\n' && (mod.meta || mod.ctrl)),
-      context: (ctx.doc),
+      context: (ctx.row || ctx.prop),
       preventDefault: true,
     },
     // newTextLine: {
@@ -79,12 +79,12 @@ APP.input.getKeymap = function (key, ctx, mod) {
     // },
     moveRowUp: {
       keypress: (key === 'up' && mod.ctrl),
-      context: (ctx.row || ctx.prop),
+      context: (!ctx.text),
       preventDefault: true,
     },
     moveRowDown: {
       keypress: (key === 'down' && mod.ctrl),
-      context: (ctx.row || ctx.prop),
+      context: (!ctx.text),
       preventDefault: true,
     },
     indentRow: {
@@ -99,32 +99,32 @@ APP.input.getKeymap = function (key, ctx, mod) {
     },
     unfoldRow: {
       keypress: (key === '+' && !mod.any),
-      context: (ctx.row || ctx.prop),
+      context: (!ctx.text),
       preventDefault: true,
     },
     foldRow: {
       keypress: (key === '-' && !mod.any),
-      context: (ctx.row || ctx.prop),
+      context: (!ctx.text),
       preventDefault: true,
     },
-    toggleCommentRow: {
+    toggleComment: {
       keypress: (key === '/' && (event.metaKey || event.ctrlKey)),
-      context: (ctx.row || ctx.prop),
+      context: (!ctx.text),
       preventDefault: true,
     },
     addProp: {
       keypress: (key === ' '),
-      context: (ctx.row || ctx.prop),
+      context: (!ctx.text),
       preventDefault: true,
     },
     deleteBW: {
       keypress: (key === '\b'),
-      context: (ctx.row || ctx.prop),
+      context: (!ctx.text),
       preventDefault: true,
     },
     deleteFW: {
       keypress: (key === 'delete'),
-      context: (ctx.row || ctx.prop),
+      context: (!ctx.text),
       preventDefault: true,
     },
     setPropType: {

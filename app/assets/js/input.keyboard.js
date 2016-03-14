@@ -2,6 +2,7 @@ APP.input.keypress = function (event) {
   event.preventDefault();
 }
 APP.input.keydown = function (event) {
+  //TODO: this keydown handler could be abstracted to some sort of action runner in the actions.js, so I could use an action say like APP.actions('selectUp', key, context, sel); so I could then add for example a 'selectTo' action and a selectTo entry to the keymap, which would then become actionmap and have pointer events too.
   var sel = APP.selection;
   var keydef = keysight(event); //TODO: use as module
   var key = keydef.key;
