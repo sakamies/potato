@@ -27,11 +27,11 @@ APP.pointer.click = function(event) {
   event.preventDefault();
 }
 APP.pointer.doubleclick = function(event) {
+  var key = 'dblclick';
   var sel = APP.selection;
-  var elm = event.target;
-  if (APP.utils.elementInDoc(elm) && !APP.utils.elementIsText(elm)) {
-    sel = APP.select.text(sel);
-    event.preventDefault();
-    APP.selection = sel;
+  var context = APP.input.getContext(event);
+  if (!context.text) {
+    var newSel = APP.actions.edit(key, context, sel);
+    APP.selection = newSel;
   }
 }
