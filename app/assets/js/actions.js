@@ -67,6 +67,22 @@ APP.actions = {
     var newSel = APP.doc.row.new(sel);
     return newSel;
   },
+  // A line is a line, you can't add a new line to a text prop, you can only create a new row and type on that
+  // newTextLine: function (key, context, sel) {
+  //   if(getSelection().modify) {     /* chrome */
+  //     var selection = window.getSelection();
+  //     var range = selection.getRangeAt(0);
+  //     var br = document.createTextNode('\n');
+  //     var textNode = document.createTextNode("\u00a0");
+  //     range.deleteContents();
+  //     range.insertNode(br);
+  //     range.collapse(false);
+  //     range.insertNode(textNode);
+  //     range.selectNodeContents(textNode);
+  //     selection.removeAllRanges();
+  //     selection.addRange(range);       /* end chrome */
+  //   }
+  // },
   moveRowUp: function (key, context, sel) {
     var newSel = APP.doc.row.moveUp(sel);
     return newSel;
@@ -91,7 +107,7 @@ APP.actions = {
     console.log('fold/collapse row');
     return newSel;
   },
-  toggleCommentRow: function (key, context, sel) {
+  toggleComment: function (key, context, sel) {
     APP.doc.row.toggleComment(sel);
     return sel;
   },

@@ -72,6 +72,11 @@ APP.input.getKeymap = function (key, ctx, mod) {
       context: (ctx.doc),
       preventDefault: true,
     },
+    // newTextLine: {
+    //   keypress: (key === '\n' && (mod.meta || mod.ctrl)),
+    //   context: (ctx.text),
+    //   preventDefault: true,
+    // },
     moveRowUp: {
       keypress: (key === 'up' && mod.ctrl),
       context: (ctx.row || ctx.prop),
