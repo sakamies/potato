@@ -176,7 +176,7 @@ APP.language = {
     return rows;
   },
   parse: function (string) {
-    console.log('parse()', string)
+    //console.log('parse()', string)
     var rows = APP.language.parseHTML(string);
     var doc = {
       language: 'html-simple',
@@ -186,8 +186,9 @@ APP.language = {
   },
   stringify: function (doc) {
     var html = '';
-    var self_closing_tags = ['!doctype', 'area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr'];
-    var openTags = [];
+    var selfClosingTags = ['!doctype', 'area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr'];
+    var endTags = [];
+    var commentOpen = false;
     var rows = doc.rows;
 
     for (var r = 0; r < rows.length; r++) {
@@ -195,14 +196,25 @@ APP.language = {
       var firstProp = row.props[0];
       var tagName = null;
       var selfClosing = false;
-      var rowToClose;
+      var tagToClose;
       var indentation = row.indentation;
+      var indentSpaces = ' '.repeat(indentation);
 
-      if (r > 0) { html += '\n'}
-      html += ' '.repeat(indentation);
+      //Open comment if necessary
+      if (row.commented && commentOpen === false) {
+        html += '\n' + indentSpaces + '<!--';
+        commentOpen = true;
+        endTags.push({tag: '-->', indentation: indentation});
+      }
+
+      //Add indentation before tag/text
+      if (r === 0) {
+        html += indentSpaces;
+      } else {
+        html += '\n' + indentSpaces;
+      }
 
       //Start tag if the row doesn't start with text
-      //TODO: if row is commented, put <!-- before start and continue parsing, when encoutering the first non commented row, add --> before that
       if (firstProp.type === 'name') {
         html += `<`;
         tagName = firstProp.text;
@@ -211,10 +223,10 @@ APP.language = {
         tagName = 'div';
       }
 
-      //Add started tag to open tags so they can be closed later
-      selfClosing = self_closing_tags.indexOf(tagName) !== -1
+      selfClosing = selfClosingTags.indexOf(tagName) !== -1
+      //Add started tag to a list of tags that need closing
       if (tagName !== null && selfClosing === false) {
-        openTags.push({tagName: tagName, indentation: indentation});
+        endTags.push({tag: `</${tagName}>`, indentation: indentation});
       }
 
       //Write out all props
@@ -235,10 +247,11 @@ APP.language = {
         if (prop.type === 'value') {
           html+= `="${prop.text}"`;
         }
-        if (p > 0 && prop.type === 'text') {
-          html+= ` ${prop.text}`; //Separate text props inside tags and multiple text props on a row with a space, so you can add any code as text inside a tag if you like
-        } else if (prop.type === 'text') {
+        //TODO: if text is only spaces, start / end tags for the element should be on the same row, so when reading the file in, the content don't get eaten away
+        if (p === 0 && prop.type === 'text') {
           html+= `${prop.text}`;
+        } else if (prop.type === 'text') {
+          html+= ` ${prop.text}`; //Text props are separated by a space on any row
         }
       }
 
@@ -247,28 +260,31 @@ APP.language = {
         html += '>';
       }
 
-      //Write end tags for rows that are indented more than the next row
+      //Write end tags & close comments
       if (r < rows.length - 1) {
         var nextRow = rows[r+1];
-        for (var t = openTags.length - 1; t >= 0; t--) {
-          if (nextRow.indentation <= openTags[t].indentation) {
-            rowToClose = openTags.pop();
-            html += '\n' + ' '.repeat(rowToClose.indentation) + `</${rowToClose.tagName}>`;
-            if (nextRow.indentation == rowToClose.indentation) {
-              break;
+        //Write end tags for rows that are indented more than the next row, comments will be closed according to the tree too, as they are included in tagsToClose, thus elements that are siblings and are both commented, get their own comment blocks
+        for (var t = endTags.length - 1; t >= 0; t--) {
+          if (nextRow.indentation <= endTags[t].indentation) {
+            tagToClose = endTags.pop();
+            html += '\n' + ' '.repeat(tagToClose.indentation) + tagToClose.tag;
+            if (tagToClose.tag === '-->') {
+              commentOpen = false;
             }
+          } else {
+            break;
           }
         }
       }
     }
 
     //close all unclosed tags after writing all rows
-    for (var i = openTags.length - 1; i >= 0; i--) {
-      rowToClose = openTags.pop();
-      html += '\n' + ' '.repeat(rowToClose.indentation) + `</${rowToClose.tagName}>`;
+    for (var i = endTags.length - 1; i >= 0; i--) {
+      tagToClose = endTags.pop();
+      html += '\n' + ' '.repeat(tagToClose.indentation) + tagToClose.tag;
     }
 
-    //console.log(html);
+    console.log(html);
     return html;
   }
 };
