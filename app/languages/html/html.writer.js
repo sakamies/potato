@@ -13,20 +13,17 @@ APP.language.write = function (doc) {
     var tagToClose;
     var indentation = row.indentation;
     var indentSpaces = ' '.repeat(indentation);
+    if (r > 0) { indentSpaces = '\n' + indentSpaces }
 
     //Open comment if necessary
     if (row.commented && commentOpen === false) {
-      html += '\n' + indentSpaces + '<!--';
+      html += indentSpaces + '<!--';
       commentOpen = true;
       endTags.push({tag: '-->', indentation: indentation});
     }
 
     //Add indentation before tag/text
-    if (r === 0) {
-      html += indentSpaces;
-    } else {
-      html += '\n' + indentSpaces;
-    }
+    html += indentSpaces;
 
     //Start tag if the row doesn't start with text
     if (firstProp.type === 'name') {
