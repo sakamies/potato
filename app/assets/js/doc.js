@@ -4,10 +4,9 @@
 APP.doc = {
   language: null,
   elm: null, //dom element that contains this document
-  rows: null, //dom element that contains rows
+  rowsElm: null, //dom element that contains rows
   row: {}, //row edit functions
   prop: {}, //property edit functions
-  'lastid': 9,
 };
 
 /*
@@ -40,9 +39,9 @@ APP.doc.init = function () {
 
 //TODO: dom2doc & doc2dom should be a function APP.doc.rows(), without parameters, it should return dom2doc result and with a paameter of a potato document js object, it should return doc2dom. Then all row editing functions would be a part of that function. Ugh, maybe.
 APP.doc.new = function (language) {
-  //var defaultUrl = '/languages/html-simple/html-simple.html';
-  var defaultUrl = '/languages/html-simple/html-simple.html';
-  //var defaultUrl = '/languages/html-simple/html-amazon.com.html';
+  //var defaultUrl = '/languages/html/html.html';
+  var defaultUrl = '/languages/html/html.sample.html';
+  //var defaultUrl = '/languages/html/html-amazon.com.html';
   $.get(defaultUrl, function(response){
     var sel = APP.doc.open(response);
     APP.doc.init();
@@ -134,7 +133,7 @@ APP.doc.save = function (dest) {
   //TODO: should take in a parameter on where to save
   //TODO: parse .document dom into abstact object format
   var doc = APP.doc.dom2doc(APP.doc.elm);
-  var html = APP.language.stringify(doc);
+  var html = APP.language.write(doc);
   if (!dest) {
     localStorage.setItem('potato-html', html);
     console.log(localStorage.getItem('potato-html', html));
