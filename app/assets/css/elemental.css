@@ -170,12 +170,8 @@ i:empty {
   padding-right: .5ch;
 }
 
-i::before,
-i::after {
-  content: "\200B";
-}
-
 .hilite {
+  min-height: 22px;
   box-shadow: inset 0px 0px 0px 1px currentColor;
 }
 
@@ -197,6 +193,7 @@ i.selected {
 i.editing {
   color: #272822;
   background-color: white;
+  box-shadow: 1px 0px 0px 0px white, -1px 0px 0px 0px white;
 }
 
 .comment {
@@ -226,7 +223,6 @@ i.editing {
 
 .word-wrap i {
   max-width: 100%;
-  overflow: hidden;
   overflow-wrap: break-word;
 }
 
