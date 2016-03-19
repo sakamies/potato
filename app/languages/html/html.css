@@ -1,30 +1,47 @@
 /*
   TODO: make after/before styling more intelligent, like if an attribute doesn't have a value, don't show the ':', so the ':' should probably be on the value as a before and colored differently, maybe white
 */
+[class*="type-"] {
+  position: relative;
+}
+[class*="type-"]::before,
+[class*="type-"]::after {
+  position: absolute;
+}
+
 .type-name {
   color: #f92772;
 }
 
 .type-id {
+  margin-left: 1ch;
   color: #be84ff;
 }
 .type-id::before {
   content: '#';
+  left: -1ch;
+  color: #be84ff;
 }
 
 .type-class {
+  margin-left: 1ch;
   color: #f6aa10;
 }
 .type-class::before {
   content: '.';
+  left: -1ch;
+  color: #f6aa10;
 }
 
 .type-attribute {
-  color: #a6e22d;
   margin-left: 1ch;
+  margin-right: 1ch;
+  color: #a6e22d;
 }
 .type-attribute::after {
   content: ':';
+  right: -1ch;
+  color: #a6e22d;
 }
 
 .type-value {

@@ -1,11 +1,11 @@
 APP.actions = {
   new: function (key, context, sel) {
     //TODO: new action should launch a new window that inits itself
-    var newSel = APP.doc.new();
+    let newSel = APP.doc.new();
     return newSel;
   },
   open: function (key, context, sel) {
-    var newSel = APP.doc.open();
+    let newSel = APP.doc.open();
     return newSel;
   },
   save: function (key, context, sel) {
@@ -14,11 +14,11 @@ APP.actions = {
     return sel;
   },
   undo: function (key, context, sel) {
-    var newSel = APP.doc.history.undo(sel);
+    let newSel = APP.doc.history.undo(sel);
     return newSel;
   },
   redo: function (key, context, sel) {
-    var newSel = APP.doc.history.redo(sel);
+    let newSel = APP.doc.history.redo(sel);
     return newSel;
   },
   selectPrev: function (key, context, sel) {
@@ -26,23 +26,23 @@ APP.actions = {
     //TODO: on selection, if nothing is selected (elm & row are null), when pressing down, select first thing in document, when pressing up, select last thing in document
     //TODO: additive selection
 
-    var newSel = APP.select.prev(sel);
+    let newSel = APP.select.prev(sel);
     return newSel;
   },
   selectNext: function (key, context, sel) {
-    var newSel = APP.select.next(sel);
+    let newSel = APP.select.next(sel);
     return newSel;
   },
   selectUp: function (key, context, sel) {
-    var newSel = APP.select.up(sel);
+    let newSel = APP.select.up(sel);
     return newSel;
   },
   selectDown: function (key, context, sel) {
-    var newSel = APP.select.down(sel);
+    let newSel = APP.select.down(sel);
     return newSel;
   },
   edit: function (key, context, sel) {
-    var newSel;
+    let newSel;
     if (context.row) {
       newSel = APP.select.element(sel.row.children[0], sel);
     } else if (context.text) {
@@ -55,7 +55,7 @@ APP.actions = {
     return newSel || sel;
   },
   escape: function (key, context, sel) {
-    var newSel;
+    let newSel;
     if (context.text) {
       newSel = APP.select.element(sel.elm, sel);
     } else if (context.prop) {

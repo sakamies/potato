@@ -8,41 +8,48 @@ APP.language = {
   shortcuts: {1:'name', 2:'id', 3:'class', 4:'attribute', 5:'value', 6:'text'},
   types: {
     name: {
-      startsWith: [],
       whitelist: '[A-Za-z]*',
-      endsWith: [' ', '.', '#'],
-      next: ['attribute', 'class', 'id'],
+      startsWith: [],//TODO: startsWith should maybe be a function that gets what the user typed and some other document context info and returns if the prop the user is editing should be of this type
+      prev: [],
+      endsWith: [' ', '#', '.'],
+      next: ['attribute', 'id', 'class'],
     },
     id: {
-      startsWith: ['#'],
       //In CSS, identifiers (including element names, classes, and IDs in selectors) can contain only the characters [a-zA-Z0-9] and ISO 10646 characters U+00A1 and higher, plus the hyphen (-) and the underscore (_); they cannot start with a digit, or a hyphen followed by a digit. Identifiers can also contain escaped characters and any ISO 10646 character as a numeric code (see next item). For instance, the identifier "B&W?" may be written as "B\&W\?" or "B\26 W\3F".
       whitelist: '-?[_a-zA-Z]+[_a-zA-Z0-9-]*',
+      startsWith: ['#'],
+      prev: ['name'],
       endsWith: ['.', ' '],
       next: ['class', 'attribute'],
     },
     class: {
-      startsWith: ['.'],
       whitelist: '-?[_a-zA-Z]+[_a-zA-Z0-9-]*',
-      endsWith: ['.', ' ', '#'],
-      next: ['class', 'attribute', 'id'],
+      startsWith: ['.'],
+      prev: ['name', 'id', 'class'],
+      endsWith: ['.', ' '],
+      next: ['class', 'attribute'],
     },
     attribute: {
-      startsWith: [],
-      whitelist: '',
+      whitelist: '-?[_a-zA-Z]+[_a-zA-Z0-9-]*',
+      startsWith: [':'],
+      prev: ['name', 'id', 'class'],
       endsWith: [':', ' '],
       next: ['value', 'value'],
     },
     value: {
-      startsWith: ['"'],
       whitelist: '',
       escapeText: true, //TODO: should this be a regexp too? escape everything, or just a whitelist or blacklist?
+      startsWith: ['"'],
+      //TODO: add something like "dependsOn: {prev: ['attribute']}", so if you delete an attribute, the value goes with it. Comes in handy with css too, where deleting a property should delete its value
+      prev: ['attribute'],
       endsWith: ['"', ' '],
       next: ['attribute', 'value'],
     },
     text: {
-      startsWith: [' '],
       whitelist: '',
       escapeText: true,
+      startsWith: [' '],
+      prev: 'any', //prev can be 'any', 'none' or array of types
       endsWith: [],
       next: ['text'],
     },

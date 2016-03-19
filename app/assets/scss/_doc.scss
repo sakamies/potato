@@ -39,13 +39,10 @@ i:empty {
   padding-left: .5ch;
   padding-right: .5ch;
 }
-i::before,
-i::after {
-  content: "\200B";
-}
 .hilite {
   //color: white !important;
   //background-color: $red !important;
+  min-height: $vx;
   box-shadow: inset 0px 0px 0px 1px currentColor;
 }
 
@@ -56,6 +53,7 @@ i::after {
 }
 i.selected {
   background-color: $gray2;
+  //box-shadow: 0px 0px 0px 1px currentColor;
 }
 :focus {
   //box-shadow: inset 0px 0px 0px 1px white(.3);
@@ -65,6 +63,11 @@ i.selected {
 i.editing {
   color: $dark;
   background-color: white;
+  box-shadow:
+    1px 0px 0px 0px white,
+    -1px 0px 0px 0px white;
+  //background-color: $dark;
+  //box-shadow: 0px 0px 0px 1px currentColor;
 }
 //
 //Comment
@@ -91,7 +94,7 @@ i.editing {
   }
   i {
     max-width: 100%;
-    overflow: hidden;
+    //overflow: hidden;
     overflow-wrap: break-word;
   }
 }

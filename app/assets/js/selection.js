@@ -49,7 +49,7 @@ APP.select.text = function (sel) {
   sel = APP.select.element(sel.elm, sel);
 
   //set as editable and select
-  sel.elm.contentEditable = true;
+  sel.elm.contentEditable = 'plaintext-only';
   sel.elm.focus();
   sel.elm.classList.add('editing');
   window.getSelection().selectAllChildren(sel.elm);
