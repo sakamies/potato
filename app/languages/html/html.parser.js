@@ -85,20 +85,31 @@ APP.language.parse = function (string) {
   };
   function textNode (textNode, depth, commented) {
     //TODO: how to handle the case where there's like "<span></span>text", so there's no whitespace after a tag. Since the text will be on its own row that no whitespace situation should probably be noted somehow, maybe with the >< whitespace eating crocodiles syntax. Also if there's some text and then a line break, should the line break + whitespace be cleaned up?
-    //TODO: handle whitespace inside pre, code, textarea (etc?) elements somehow. Check ['pre', 'code'].indexOf(parentNode.nodeName)
-    var props = [];
-    var row = {};
-    var rows = [];
-    props.push({
-      type: 'text',
-      text: textNode.textContent.trim(),
-    });
-    row = {
-      commented: commented,
-      indentation: depth * APP.config.view.indentation,
-      props: props
-    };
-    rows.push(row);
+    //TODO: handle whitespace inside pre, code, textarea (etc?) elements somehow. Check ['pre', 'code'].indexOf($().parents().nodeName)) or something
+    /*TODO:
+      - split text nodes on any '\n', so each row is a row in the doc too
+      - trim rows and somehow smartly add indentation
+      - find out why there's an orphan whitespace in the doc after every textNode that was read
+    */
+    let texts = textNode.textContent.trim().split('\n');
+    let rows = [];
+
+    //make doc row for each row of text
+    for (let i = 0; i < texts.length; i++) {
+      let props = [];
+      let row = {};
+      props.push({
+        type: 'text',
+        text: texts[i].trim(), //TODO: trim away only as much spaces as depth needs from the front of the string
+      });
+      row = {
+        commented: commented,
+        indentation: depth * APP.config.view.indentation,
+        props: props
+      };
+      rows.push(row);
+    }
+
     return rows;
   };
   function commentNode (commentNode, depth, commented) {
