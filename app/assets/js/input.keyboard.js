@@ -43,11 +43,11 @@ APP.input.textInput = function (event) {
   //try figuring out what type the user wants by looking at the first typed character
   if (textContent.length === 1) {
     let char = textContent;
-    for (let key in types) {
-      let type = types[key];
+    for (let typeName in types) {
+      let type = types[typeName];
       let prevTypeName = APP.doc.prop.getType(sel.elm.previousSibling);
       if (type.startsWith.indexOf(char) !== -1 && (type.prev.indexOf(prevTypeName) !== -1 || type.prev === 'any')) {
-        sel = APP.doc.prop.init(sel, type);
+        sel = APP.doc.prop.init(sel, typeName);
       }
     }
   }
