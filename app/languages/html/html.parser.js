@@ -58,6 +58,10 @@ APP.language.parse = function (string) {
       text: elNode.nodeName.toLowerCase()
     });
 
+    //TODO: if node has id, add prop type: id
+
+    //TODO: if node has className, split with spaces and iterate over and add prop type: class props
+
     for (var atidx = 0; atidx < elNode.attributes.length; atidx++) {
       props.push({
         type: 'attribute',

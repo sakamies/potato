@@ -1,6 +1,7 @@
 APP.doc.history = {
   index: -1,
-  data: []
+  data: [],
+  sel: '' //TODO: implement numerical ranges based selection instead of element reference based selection
 }
 
 //TODO: input actions should trigger history instead of app.doc.something functions, so if the app internally composes editing functions, it shouldn't create many history entries.

@@ -10,6 +10,21 @@ APP.input.getKeyModifiers = function (event) {
     ctrlShift: event.ctrlKey && event.shiftKey && !event.altKey && !event.metaKey,
   }
 }
+// APP.input.languageShortcuts = function (types) {
+  //TODO: have some way to trigger an action based on language configs endsWith char
+//   var arr = []
+//   for (let key in types) {
+//     let type = types[key];
+//     for (let i = 0; i < type.endsWith.length; i++) {
+//       let char = type.endsWith[i];
+//       if (arr.indexOf(char) === -1) {
+//         arr.push(char);
+//       }
+//     }
+//   }
+//   console.log(arr);
+//   return arr;
+// };
 APP.input.getKeymap = function (key, ctx, mod) {
   return {
     new: {

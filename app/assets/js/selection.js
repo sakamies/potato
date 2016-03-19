@@ -7,11 +7,27 @@
   }
 */
 
+/*
+  //Selection (sel) object should look like this:
+  {
+    'ranges': [
+      {
+        from: integer or [int, int]
+        to: integer or [int, int]
+      }
+    ]
+    'row': <dom element reference>,
+    'elm': <dom element reference>,
+    'farthest': 0, // TODO: Implement farthest selection so you don't reset your column even if you go through a few rows that have only one column or so
+  }
+*/
+
 APP.selection = {
   'row': null,
   'elm': null,
   'farthest': 0,
 };
+//TODO: make selection into a function and use revealing module pattern or some such to reveal the functions inside it, this way the selection function can track its state internally without the need to toss the selection object around the app. Take some cues from window.selection
 //TODO: refactor selection to work with indexes instead of element references, that way the selection is separate from the document and easier to reason about. Clicking an element requires finding out its index, which might be slow on large documents.
 
 APP.select = {};
