@@ -73,37 +73,35 @@ APP.input.getKeymap = function (key, ctx, mod) {
       preventDefault: true,
     },
     // newTextLine: {
-    //   keypress: (key === '\n' && (mod.meta || mod.ctrl)),
-    //   context: (ctx.text),
-    //   preventDefault: true,
+    //Note to future self: will not be implemented
     // },
-    moveRowUp: {
+    moveUp: {
       keypress: (key === 'up' && mod.ctrl),
       context: (!ctx.text),
       preventDefault: true,
     },
-    moveRowDown: {
+    moveDown: {
       keypress: (key === 'down' && mod.ctrl),
       context: (!ctx.text),
       preventDefault: true,
     },
-    indentRow: {
+    indent: {
       keypress: (key === '\t' && !mod.any),
       context: (ctx.row || ctx.prop),
       preventDefault: true,
     },
-    outdentRow: {
+    outdent: {
       keypress: (key === '\t' && mod.shift),
       context: (ctx.row || ctx.prop),
       preventDefault: true,
     },
-    unfoldRow: {
-      keypress: (key === '+' && !mod.any),
+    fold: {
+      keypress: (key === '-' && !mod.any),
       context: (!ctx.text),
       preventDefault: true,
     },
-    foldRow: {
-      keypress: (key === '-' && !mod.any),
+    unfold: {
+      keypress: (key === '+' && !mod.any),
       context: (!ctx.text),
       preventDefault: true,
     },

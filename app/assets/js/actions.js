@@ -64,47 +64,44 @@ APP.actions = {
     return newSel || sel;
   },
   newRow: function (key, context, sel) {
-    var newSel = APP.doc.row.new(sel);
+    let newSel = APP.doc.row.new(sel);
     return newSel;
   },
-  // A line is a line, you can't add a new line to a text prop, you can only create a new row and type on that
+  //NOTE: A row is a row, you can't add a new line to a text prop, you can only create a new row and type on that
   // newTextLine: function (key, context, sel) {
-  //   if(getSelection().modify) {     /* chrome */
-  //     var selection = window.getSelection();
-  //     var range = selection.getRangeAt(0);
-  //     var br = document.createTextNode('\n');
-  //     var textNode = document.createTextNode("\u00a0");
-  //     range.deleteContents();
-  //     range.insertNode(br);
-  //     range.collapse(false);
-  //     range.insertNode(textNode);
-  //     range.selectNodeContents(textNode);
-  //     selection.removeAllRanges();
-  //     selection.addRange(range);       /* end chrome */
-  //   }
   // },
-  moveRowUp: function (key, context, sel) {
-    var newSel = APP.doc.row.moveUp(sel);
+  moveUp: function (key, context, sel) {
+    let newSel;
+    if (context.row) {
+      newSel = APP.doc.row.moveUp(sel);
+    } else {
+      newSel = APP.doc.prop.moveUp(sel);
+    }
     return newSel;
   },
-  moveRowDown: function (key, context, sel) {
-    var newSel = APP.doc.row.moveDown(sel);
+  moveDown: function (key, context, sel) {
+    let newSel;
+    if (context.row) {
+      newSel = APP.doc.row.moveDown(sel);
+    } else {
+      newSel = APP.doc.prop.moveDown(sel);
+    }
     return newSel;
   },
-  indentRow: function (key, context, sel) {
-    var newSel = APP.doc.row.indent(sel);
+  indent: function (key, context, sel) {
+    let newSel = APP.doc.row.indent(sel);
     return newSel;
   },
-  outdentRow: function (key, context, sel) {
-    var newSel = APP.doc.row.outdent(sel);
+  outdent: function (key, context, sel) {
+    let newSel = APP.doc.row.outdent(sel);
     return newSel;
   },
-  unfoldRow: function (key, context, sel) {
-    console.log('unfold/expand row');
-    return newSel;
-  },
-  foldRow: function (key, context, sel) {
+  fold: function (key, context, sel) {
     console.log('fold/collapse row');
+    return newSel;
+  },
+  unfold: function (key, context, sel) {
+    console.log('unfold/expand row');
     return newSel;
   },
   toggleComment: function (key, context, sel) {
@@ -116,11 +113,11 @@ APP.actions = {
     return sel;
   },
   deleteBW: function (key, context, sel) {
-    var newSel = APP.doc.prop.delBW(sel);
+    let newSel = APP.doc.prop.delBW(sel);
     return newSel;
   },
   deleteFW: function (key, context, sel) {
-    var newSel = APP.doc.prop.delFW(sel);
+    let newSel = APP.doc.prop.delFW(sel);
     return newSel;
   },
   addProp: function (key, context, sel) {
