@@ -26,8 +26,8 @@ APP.language = {
       whitelist: '-?[_a-zA-Z]+[_a-zA-Z0-9-]*',
       startsWith: ['.'],
       prev: ['name', 'id', 'class'],
-      endsWith: ['.', ' '],
-      next: ['class', 'attribute'],
+      endsWith: [' ', '.'],
+      next: ['attribute', 'class'],
     },
     attribute: {
       whitelist: '-?[_a-zA-Z]+[_a-zA-Z0-9-]*',
