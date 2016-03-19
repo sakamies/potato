@@ -2,11 +2,15 @@
 
 
 APP.doc.prop.getType = function (elm) {
-  var type = elm.className.split(' ');
-  type = type.find(function(item) {
-    return item.match(/^type-/);
-  });
-  return type.substring(5);
+  if (elm) {
+    var type = elm.className.split(' ');
+    type = type.find(function(item) {
+      return item.match(/^type-/);
+    });
+    return type.substring(5);
+  } else {
+    null;
+  }
 }
 APP.doc.prop.new = function (sel, type) {
   var template = APP.config.templates.prop.replace('$text', '');
@@ -34,8 +38,11 @@ APP.doc.prop.new = function (sel, type) {
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return newSel;
 }
-APP.doc.prop.init = function (sel) {
+APP.doc.prop.init = function (sel, type) {
   sel.elm.innerHTML = '';
+  if (type) {
+    newSel = APP.doc.prop.setType(sel, type);
+  }
   newSel = APP.select.element(sel.elm);
   APP.doc.history.add(APP.doc.elm.innerHTML);
   return newSel;
@@ -83,11 +90,12 @@ APP.doc.prop.delFW = function (sel) {
 }
 
 APP.doc.prop.setType = function (sel, type) {
-  console.log('setType()', sel, type)
-  var className = sel.elm.className;
-  className = className.replace(/(type-[a-z0-9]*)|(\$type)/ig, `type-${type}`);
-  sel.elm.className = className;
-  APP.doc.history.add(APP.doc.elm.innerHTML);
+  if (type) {
+    var className = sel.elm.className;
+    className = className.replace(/(type-[a-z0-9]*)|(\$type)/ig, `type-${type}`);
+    sel.elm.className = className;
+    APP.doc.history.add(APP.doc.elm.innerHTML);
+  }
   return sel;
 }
 APP.doc.prop.validate = function (sel, whitelist) {
