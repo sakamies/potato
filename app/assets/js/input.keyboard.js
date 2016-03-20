@@ -40,19 +40,19 @@ APP.input.textInput = function (event) {
 
   //sel = APP.doc.prop.validate(sel);
 
-  //try figuring out what type the user wants by looking at the first typed character
-  if (textContent.length === 1) {
-    let char = textContent;
-    for (let typeName in types) {
-      let type = types[typeName];
-      let prevTypeName = APP.doc.prop.getType(sel.elm.previousSibling);
-      if (type.startsWith.indexOf(char) !== -1 && (type.prev.indexOf(prevTypeName) !== -1 || type.prev === 'any')) {
-        sel = APP.doc.prop.init(sel, typeName);
-      }
+  //try figuring out the type the user wants based on language rules
+  for (let typeName in types) {
+    let type = types[typeName];
+    let startStringMatch = type.startsWith.indexOf(textContent) !== -1;
+    let prevTypeName = APP.doc.prop.getType(sel.elm.previousSibling);
+    let prevTypeMatch = type.prev.indexOf(prevTypeName) !== -1;
+    if (startStringMatch && prevTypeMatch) {
+      sel = APP.doc.prop.init(sel, typeName);
+      return;
     }
   }
   //if the prop has some content, check the last char of the prop to determine if the user wants to start a new prop of some type
-  else if (textContent.length > 1) {
+  if (textContent.length > 1) {
     let char = textContent.substring(textContent.length - 1);
     let nextTypeName = types[selElmType].endsWith.indexOf(char);
     nextTypeName = types[selElmType].next[nextTypeName];
