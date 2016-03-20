@@ -9,7 +9,7 @@ APP.doc.prop.getType = function (elm) {
     });
     return type.substring(5);
   } else {
-    null;
+    return null;
   }
 }
 APP.doc.prop.new = function (sel, type) {
