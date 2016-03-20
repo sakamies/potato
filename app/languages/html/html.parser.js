@@ -146,7 +146,7 @@ APP.language.parse = function (string) {
       text: '!doctype'
     });
     props.push({
-      type: 'text',
+      type: 'attribute',
       text: doctypeNode.name
     });
     row = {

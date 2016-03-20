@@ -9,7 +9,6 @@ APP.actions = {
     return newSel;
   },
   save: function (key, context, sel) {
-    //TODO: does not yet work completely, outputs html to the console but does not save it anywhere
     APP.doc.save();
     return sel;
   },

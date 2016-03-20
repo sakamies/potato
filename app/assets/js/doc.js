@@ -37,11 +37,11 @@ APP.doc.init = function () {
   APP.doc.elm.addEventListener('input', APP.input.textInput);
 }
 
-//TODO: dom2doc & doc2dom should be a function APP.doc.rows(), without parameters, it should return dom2doc result and with a paameter of a potato document js object, it should return doc2dom. Then all row editing functions would be a part of that function. Ugh, maybe.
+//TODO: dom2doc & doc2dom should be a function APP.doc.rows(), without parameters, it should return dom2doc result and with a parameter of a potato document js object, it should return doc2dom. Then all row editing functions would be a part of that function. Ugh, maybe.
 APP.doc.new = function (language) {
-  //var defaultUrl = '/languages/html/html.html';
+  // var defaultUrl = '/languages/html/html.sample.pumpula.html';
   var defaultUrl = '/languages/html/html.sample.html';
-  //var defaultUrl = '/languages/html/html-amazon.com.html';
+  // var defaultUrl = '/languages/html/html.sample.amazon.html';
   $.get(defaultUrl, function(response){
     var sel = APP.doc.open(response);
     APP.doc.init();
@@ -71,22 +71,6 @@ APP.doc.open = function (data) {
 APP.doc.doc2dom = function (doc) {
   //takes in doc as object, returns rows as dom
   //TODO: actually returns html, not dom, make it return dom?
-  /*
-    //doc object spec:
-    {
-      language: string
-      rows: [
-        {
-          indentation: integer
-          commented: boolean
-          props: [
-            type: string
-            text: string
-          ]
-        }
-      ]
-    }
-  */
   var rows = doc.rows;
   var row;
   var elm;
@@ -102,7 +86,6 @@ APP.doc.doc2dom = function (doc) {
 
     for (var j = 0; j < row.props.length; j++) {
       //TODO: move creating the prop into its own function
-      //TODO: check prop against its type whitelist, refactor prop.validate() so it can be used here too
       prop = row.props[j];
       outProp = '';
       if (prop.text.match(/^\s+$/) || prop.text === '') {
@@ -110,6 +93,7 @@ APP.doc.doc2dom = function (doc) {
       } else {
         outProp = APP.config.templates.prop.replace('$type', `type-${prop.type}`);
       }
+      //TODO: escape prop.text, it could contain anything, angle brackets etc
       outProp = outProp.replace('$text', prop.text);
       outRow += outProp;
     }
