@@ -1,25 +1,26 @@
+$sidebar-width: 220px;
+
 .document {
-  margin-bottom: 44px;
+  margin-right: $sidebar-width;
 }
 .toolbar {
   position: fixed;
+  top: 0;
   bottom: 0;
-  left: 0;
   right: 0;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-start;
-  align-items: stretch;
-  height: 44px;
+  align-items: flex-start;
+  width: $sidebar-width;
   background-color: $dark;
   border-top: 1px solid $gray3;
 }
 .toolbar > * {
-  flex: 1 0 auto;
+  flex: 0 0 auto;
 }
 .toolbar button {
   text-align: left;
   white-space: nowrap;
   flex: 0 0 auto;
-
 }

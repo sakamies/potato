@@ -84,41 +84,41 @@ textarea:focus {
 }
 
 .document {
-  margin-bottom: 44px;
+  margin-right: 220px;
 }
 
 .toolbar {
   position: fixed;
+  top: 0;
   bottom: 0;
-  left: 0;
   right: 0;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: horizontal;
+  -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  -webkit-flex-direction: row;
-      -ms-flex-direction: row;
-          flex-direction: row;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
   -webkit-box-pack: start;
   -webkit-justify-content: flex-start;
       -ms-flex-pack: start;
           justify-content: flex-start;
-  -webkit-box-align: stretch;
-  -webkit-align-items: stretch;
-      -ms-flex-align: stretch;
-          align-items: stretch;
-  height: 44px;
+  -webkit-box-align: start;
+  -webkit-align-items: flex-start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  width: 220px;
   background-color: #272822;
   border-top: 1px solid #3e3d32;
 }
 
 .toolbar > * {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1 0 auto;
-      -ms-flex: 1 0 auto;
-          flex: 1 0 auto;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
 }
 
 .toolbar button {
@@ -150,7 +150,7 @@ textarea:focus {
 }
 
 .row {
-  padding: 0 .5ch 0;
+  padding: 0 0 0;
   background: -webkit-linear-gradient(#272822 0%, #272822 100%), transparent;
   background: linear-gradient(#272822 0%, #272822 100%), transparent;
   background-origin: content-box, border-box;

@@ -34,18 +34,20 @@
 }
 
 .type-attribute {
-  margin-left: 1ch;
-  margin-right: 1ch;
   color: #a6e22d;
 }
-.type-attribute::after {
-  content: ':';
-  right: -1ch;
-  color: #a6e22d;
+* + .type-attribute {
+  margin-left: 1ch;
 }
 
 .type-value {
   color: #e6db74;
+  margin-left: 1ch;
+}
+.type-value::before {
+  content: ':';
+  left: -1ch;
+  color: #a6e22d;
 }
 
 .type-text {
