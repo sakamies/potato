@@ -53,24 +53,38 @@ APP.language.parse = function (string) {
   function elementNode (elNode, depth, commented) {
     var rows = [];
     var props = [];
+
     props.push({
       type: 'name',
       text: elNode.nodeName.toLowerCase()
     });
 
-    //TODO: if node has id, add prop type: id
-
-    //TODO: if node has className, split with spaces and iterate over and add prop type: class props
-
+    if (elNode.hasAttribute('id')) {
+      props.push({
+        type: 'id',
+        text: elNode.getAttribute('id')
+      });
+    }
+    if (elNode.hasAttribute('class')) {
+      let classes = elNode.getAttribute('class').split(' ');
+      for (let i = 0; i < classes.length; i++) {
+        props.push({
+          type: 'class',
+          text: classes[i],
+        });
+      }
+    }
     for (var atidx = 0; atidx < elNode.attributes.length; atidx++) {
-      props.push({
-        type: 'attribute',
-        text: elNode.attributes[atidx].name
-      });
-      props.push({
-        type: 'value',
-        text: elNode.attributes[atidx].value
-      });
+      if (['id','class'].indexOf(elNode.attributes[atidx].name.toLowerCase()) === -1) {
+        props.push({
+          type: 'attribute',
+          text: elNode.attributes[atidx].name
+        });
+        props.push({
+          type: 'value',
+          text: elNode.attributes[atidx].value
+        });
+      }
     };
     row = {
       commented: commented,
