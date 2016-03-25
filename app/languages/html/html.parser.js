@@ -27,14 +27,14 @@ APP.language.parse = function (string) {
   };
   function domNode (domnode, depth, commented) {
     //takes a domnode (that can have children), returns an array of rows
-    var rows = [];
+    let rows = [];
     if (domnode.nodeType === 1) {
       rows = rows.concat(elementNode(domnode, depth, commented));
     }
-    else if (domnode.nodeType === 3 && !domnode.textContent.match(/^\s*\n\s*$/)) {
-      var textRow = textNode(domnode, depth, commented);
-      if (textRow) {
-        rows = rows.concat(textRow);
+    else if (domnode.nodeType === 3) {
+      let textRows = textNode(domnode, depth, commented);
+      if (textRows) {
+        rows = rows.concat(textRows);
       }
     }
     else if (domnode.nodeType === 8) {
@@ -106,19 +106,29 @@ APP.language.parse = function (string) {
     //TODO: handle whitespace inside pre, code, textarea (etc?) elements somehow. Check ['pre', 'code'].indexOf($().parents().nodeName)) or something
     /*TODO:
       - split text nodes on any '\n', so each row is a row in the doc too
-      - trim rows and somehow smartly add indentation
-      - find out why there's an orphan whitespace in the doc after every textNode that was read
+      - trim rows and somehow smartly add indentation, impossibble to do totally reliably, with all the mixes space & tab combos and such
     */
-    let texts = textNode.textContent.trim().split('\n');
+    let textContent = textNode.textContent;
+    let texts = [];
     let rows = [];
 
-    //make doc row for each row of text
+    //Skip text that's probably only whitespace for formatting code
+    if (textContent.match(/^\s*\n\s*$/)) {
+      return false;
+    } else if (textContent.match(/^\s+$/)) {
+      texts = [textContent];
+    }
+    else {
+      texts = textContent.trim().split('\n');
+    }
+    //TODO: textContent.match(/^\s+$/) !?!?
+
     for (let i = 0; i < texts.length; i++) {
       let props = [];
       let row = {};
       props.push({
         type: 'text',
-        text: texts[i].trim(), //TODO: trim away only as much spaces as depth needs from the front of the string
+        text: texts[i], //TODO: trim away only as much spaces as depth needs from the front of the string
       });
       row = {
         commented: commented,

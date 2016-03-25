@@ -33,16 +33,18 @@ i {
   overflow-wrap: break-word;
   display: inline-block;
   vertical-align: middle;
+  min-height: $vx;
   border-radius: 3px;
 }
 i:empty {
   padding-left: .5ch;
   padding-right: .5ch;
+  box-shadow: inset 0px 0px 0px 1px currentColor;
+  //TODO: delete completely empty props when they are deselected
 }
 .hilite {
   //color: white !important;
   //background-color: $red !important;
-  min-height: $vx;
   box-shadow: inset 0px 0px 0px 1px currentColor;
 }
 

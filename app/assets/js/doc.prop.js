@@ -3,7 +3,7 @@
 
 APP.doc.prop.getType = function (elm) {
   if (elm) {
-    var type = elm.className.split(' ');
+    let type = elm.className.split(' ');
     type = type.find(function(item) {
       return item.match(/^type-/);
     });
@@ -13,9 +13,9 @@ APP.doc.prop.getType = function (elm) {
   }
 }
 APP.doc.prop.new = function (sel, type) {
-  var template = APP.config.templates.prop.replace('$text', '');
-  var newProp;
-  var newSel;
+  let template = APP.config.templates.prop.replace('$text', '');
+  let newProp;
+  let newSel;
 
   if (APP.utils.elementIsRow(sel.elm)) {
     newProp = $(sel.elm).append(template).children().last()[0];
@@ -27,10 +27,8 @@ APP.doc.prop.new = function (sel, type) {
 
   if (!type) {
     APP.doc.prop.setType(newSel, APP.language.defaultType);
-    console.log('no type given', newSel)
   } else {
     APP.doc.prop.setType(newSel, type);
-    console.log('has type', newSel, type)
   }
 
   newSel = APP.select.text(newSel);
@@ -39,6 +37,7 @@ APP.doc.prop.new = function (sel, type) {
   return newSel;
 }
 APP.doc.prop.init = function (sel, type) {
+  let newSel = sel;
   sel.elm.innerHTML = '';
   if (type) {
     newSel = APP.doc.prop.setType(sel, type);
@@ -57,8 +56,8 @@ APP.doc.prop.del = function (sel) {
   return {elm: null, row: null};
 }
 APP.doc.prop.delBW = function (sel) {
-  var prev = APP.select.prev(sel);
-  var next;
+  let prev = APP.select.prev(sel);
+  let next;
 
   if (prev !== sel) {
     APP.doc.prop.del(sel);
@@ -73,8 +72,8 @@ APP.doc.prop.delBW = function (sel) {
   return APP.doc.prop.init(sel);
 }
 APP.doc.prop.delFW = function (sel) {
-  var next = APP.select.next(sel);
-  var prev;
+  let next = APP.select.next(sel);
+  let prev;
 
   if (next !== sel) {
     APP.doc.prop.del(sel);
@@ -91,7 +90,7 @@ APP.doc.prop.delFW = function (sel) {
 
 APP.doc.prop.setType = function (sel, type) {
   if (type) {
-    var className = sel.elm.className;
+    let className = sel.elm.className;
     className = className.replace(/(type-[a-z0-9]*)|(\$type)/ig, `type-${type}`);
     sel.elm.className = className;
     APP.doc.history.add(APP.doc.elm.innerHTML);
@@ -99,17 +98,22 @@ APP.doc.prop.setType = function (sel, type) {
   return sel;
 }
 APP.doc.prop.validate = function (sel, whitelist) {
+  let newSel = sel;
   //TODO: check whitelist and highlight characters that are not on it
   //TODO: if prop is empty, delete it and select prev or next
   if (APP.utils.elementIsProp(sel.elm)) {
     //TODO: make the guts of this function into a more generic function so it can be used inside doc2dom function too
-    var text = sel.elm.textContent;
+    let text = sel.elm.textContent;
     //check if element is only whitespace and highlight if it is
-    if (text.match(/^\s+$/) || text === '') {
+    if (text === '') {
+      newSel = APP.doc.prop.delBW(sel);
+    } else if (text.match(/^\s+$/)) {
       sel.elm.classList.add('hilite');
     } else {
       sel.elm.classList.remove('hilite');
     }
+  } else {
+    newSel = sel;
   }
-  return sel;
+  return newSel;
 }

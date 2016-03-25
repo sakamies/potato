@@ -62,7 +62,7 @@ APP.select.element = function (newElm, oldSel) {
 APP.select.text = function (sel) {
 
   //collapse selection
-  sel = APP.select.element(sel.elm, sel);
+  //sel = APP.select.element(sel.elm, sel);
 
   //set as editable and select
   sel.elm.contentEditable = 'plaintext-only';

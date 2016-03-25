@@ -88,7 +88,7 @@ APP.doc.doc2dom = function (doc) {
       //TODO: move creating the prop into its own function
       prop = row.props[j];
       outProp = '';
-      if (prop.text.match(/^\s+$/) || prop.text === '') {
+      if (prop.text === '' || prop.text.match(/^\s+$/)) {
         outProp = APP.config.templates.prop.replace('$type', `type-${prop.type} hilite`);
       } else {
         outProp = APP.config.templates.prop.replace('$type', `type-${prop.type}`);

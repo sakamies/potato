@@ -45,8 +45,9 @@ APP.actions = {
     if (context.row) {
       newSel = APP.select.element(sel.row.children[0], sel);
     } else if (context.text) {
-      newSel = APP.doc.prop.validate(sel);
+      //TODO: this is the same as escape, combine them somehow?
       newSel = APP.select.element(sel.elm, sel);
+      newSel = APP.doc.prop.validate(sel);
       APP.doc.history.add(APP.doc.elm.innerHTML);
     } else {
       newSel = APP.select.text(sel);
@@ -57,6 +58,8 @@ APP.actions = {
     let newSel;
     if (context.text) {
       newSel = APP.select.element(sel.elm, sel);
+      newSel = APP.doc.prop.validate(sel);
+      APP.doc.history.add(APP.doc.elm.innerHTML);
     } else if (context.prop) {
       newSel = APP.select.row(sel);
     }

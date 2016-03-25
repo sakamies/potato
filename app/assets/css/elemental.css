@@ -162,16 +162,17 @@ i {
   overflow-wrap: break-word;
   display: inline-block;
   vertical-align: middle;
+  min-height: 22px;
   border-radius: 3px;
 }
 
 i:empty {
   padding-left: .5ch;
   padding-right: .5ch;
+  box-shadow: inset 0px 0px 0px 1px currentColor;
 }
 
 .hilite {
-  min-height: 22px;
   box-shadow: inset 0px 0px 0px 1px currentColor;
 }
 
