@@ -17,6 +17,7 @@
   margin-left: 1ch;
   color: #be84ff;
 }
+/*//TODO: before/after syntax bits should be added via javascript and be pointer-events:none & user-select: none; so that they're searchable via browsers basic search. This would need updating selection and editing logic so it's not dependent on directly manipupalting the dom. */
 .type-id::before {
   content: '#';
   left: -1ch;

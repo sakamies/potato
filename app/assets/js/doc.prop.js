@@ -59,6 +59,7 @@ APP.doc.prop.delBW = function (sel) {
   let prev = APP.select.prev(sel);
   let next;
 
+  //TODO: make APP.doc.prop.prev() and .next functions so this logic doesn't need to be repeadet, it's needed both when selecting and when deleting stuff
   if (prev !== sel) {
     APP.doc.prop.del(sel);
     return prev;

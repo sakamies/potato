@@ -29,7 +29,7 @@ APP.pointer.click = function(event) {
 APP.pointer.doubleclick = function(event) {
   var key = 'dblclick';
   var sel = APP.selection;
-  var context = APP.input.getContext(event);
+  var context = APP.input.getContext(event.target);
   if (!context.text) {
     var newSel = APP.actions.edit(key, context, sel);
     APP.selection = newSel;

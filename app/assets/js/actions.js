@@ -20,6 +20,21 @@ APP.actions = {
     let newSel = APP.doc.history.redo(sel);
     return newSel;
   },
+  cut: function (key, context, sel, event) {
+    //TODO: copy, then delFW
+    let newSel = sel;
+    return newSel;
+  },
+  copy: function (key, context, sel, event) {
+    //TODO: just copy
+    let newSel = sel;
+    return newSel;
+  },
+  paste: function (key, context, sel, event) {
+    //TODO: paste in place of selection, or after selection?
+    let newSel = sel;
+    return newSel;
+  },
   selectPrev: function (key, context, sel) {
     //TODO: Check for shift key and handle additive selection
     //TODO: on selection, if nothing is selected (elm & row are null), when pressing down, select first thing in document, when pressing up, select last thing in document
@@ -85,17 +100,27 @@ APP.actions = {
     let newSel;
     if (context.row) {
       newSel = APP.doc.row.moveDown(sel);
-    } else {
+    } else if (context.prop) {
       newSel = APP.doc.prop.moveDown(sel);
     }
     return newSel;
   },
-  indent: function (key, context, sel) {
-    let newSel = APP.doc.row.indent(sel);
+  moveRight: function (key, context, sel) {
+    let newSel;
+    if (context.row) {
+      newSel = APP.doc.row.indent(sel);
+    } else if (context.prop) {
+      newSel = APP.doc.prop.moveRight(sel);
+    }
     return newSel;
   },
-  outdent: function (key, context, sel) {
-    let newSel = APP.doc.row.outdent(sel);
+  moveRight: function (key, context, sel) {
+    let newSel;
+    if (context.row) {
+      newSel = APP.doc.row.outdent(sel);
+    } else if (context.prop) {
+      newSel = APP.doc.prop.moveLeft(sel);
+    }
     return newSel;
   },
   fold: function (key, context, sel) {

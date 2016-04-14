@@ -7,7 +7,7 @@ APP.input.keydown = function (event) {
   var keydef = keysight(event); //TODO: use as module
   var key = keydef.key;
   var char = keydef.char;
-  var context = APP.input.getContext(event);
+  var context = APP.input.getContext(event.target);
   var mod = APP.input.getKeyModifiers(event);
   var keymap = APP.input.getKeymap(key, context, mod);
 

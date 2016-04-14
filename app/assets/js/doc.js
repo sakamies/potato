@@ -29,12 +29,7 @@ APP.doc = {
 */
 
 APP.doc.init = function () {
-  APP.doc.elm.addEventListener('mousedown', APP.pointer.mousedown);
-  APP.doc.elm.addEventListener('mouseup', APP.pointer.mouseup);
-  APP.doc.elm.addEventListener('click', APP.pointer.click);
-  APP.doc.elm.addEventListener('dblclick', APP.pointer.doubleclick);
-  APP.doc.elm.addEventListener('keydown', APP.input.keydown);
-  APP.doc.elm.addEventListener('input', APP.input.textInput);
+  APP.input.init(APP.doc.elm);
 }
 
 //TODO: dom2doc & doc2dom should be a function APP.doc.rows(), without parameters, it should return dom2doc result and with a parameter of a potato document js object, it should return doc2dom. Then all row editing functions would be a part of that function. Ugh, maybe.
