@@ -34,9 +34,9 @@ APP.doc.init = function () {
 
 //TODO: dom2doc & doc2dom should be a function APP.doc.rows(), without parameters, it should return dom2doc result and with a parameter of a potato document js object, it should return doc2dom. Then all row editing functions would be a part of that function. Ugh, maybe.
 APP.doc.new = function (language) {
-  // var defaultUrl = '/languages/html/html.sample.pumpula.html';
-  var defaultUrl = '/languages/html/html.sample.html';
-  // var defaultUrl = '/languages/html/html.sample.amazon.html';
+  // var defaultUrl = 'languages/html/html.sample.pumpula.html';
+  var defaultUrl = 'languages/html/html.sample.html';
+  // var defaultUrl = 'languages/html/html.sample.amazon.html';
   $.get(defaultUrl, function(response){
     var sel = APP.doc.open(response);
     APP.doc.init();
